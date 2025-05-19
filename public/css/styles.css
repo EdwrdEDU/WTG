@@ -1,0 +1,75 @@
+.navbar{
+  background-color: #ff4500;
+}
+
+.nav-link, .navbar-brand{
+  color: white;
+  font-size: 22px;
+  padding: 10px 20px;
+  font-family: 'Anton', sans-serif;
+}
+
+
+form.d-flex{
+  padding: 3px 120px;
+  border-radius: 25px;
+}
+
+button.btn{
+  border: 0.5px solid white;
+  border-radius: 50%;
+  margin-left:10px;
+}
+
+input.form-control{
+  width: 300px;
+  border-radius: 25px;
+}
+
+.account-container {
+  border: 2px solid red;
+  width: 25%;
+  height: 520px;
+  margin: 120px 150px 0 auto;
+}
+
+.text-banner{
+  text-align: center;
+  margin-top: 30px;
+}
+
+.account-item{
+  margin: 10px 30px;
+}
+
+.input-field{
+  width: 100%;
+}
+
+.create-button{
+  float: right;
+  margin: 5px 30px 20px 0;
+  background-color: #ff4500;  
+  padding: 10px;
+  border: none;
+  border-radius: 25px;
+}
+
+.already{
+  clear: both;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.account-container-login {
+  border: 2px solid red;
+  width: 25%;
+  height: 370px;
+  margin: 178px 150px 0 auto;
+}
+
+.dont{
+  clear: both;
+  text-align: center;
+  margin-top: 10px;
+}

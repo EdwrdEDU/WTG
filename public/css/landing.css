@@ -1,0 +1,324 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+body {
+    margin: 0;
+    background-color: #FEF3E2;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+
+}
+
+.cta-buttons a {
+    display: inline-block;
+    margin: 0 10px;
+    padding: 15px 30px;
+    background-color: #ff4500;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+.cta-buttons a:hover {
+    background-color: #e03e00;
+}
+
+.ticker-wrap {
+    width: 100%;
+    overflow: hidden;
+    background: #FA4032;
+    color: #111;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    font-family: 'Courier New', monospace;
+    font-size: 1.3rem;
+    padding: 1rem 0;
+    text-align: center;
+    white-space: nowrap;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.6);
+}
+
+.ticker {
+    display: inline-block;
+    padding-left: 100%;
+    animation: ticker-scroll 25s linear infinite;
+}
+
+@keyframes ticker-scroll {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.video-fixed {
+    width: 100vw;
+    height: 1000px;
+    overflow: hidden;
+    visibility: visible;
+}
+
+.video-fixed iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.hero {
+    background: #FEF3E2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border: #111 1px solid;
+}
+
+.hero h1 {
+    font-size: 16vw;                 
+    transform: scaleX(1.5);         
+    display: inline-block;         
+    font-weight: 900;
+    line-height: 0.1;
+    color: #FAB12F;
+    letter-spacing: 0;
+    font-family: 'Anton', sans-serif; 
+}
+
+.event-box {
+    display: flex;
+    justify-content: space-between;
+    background: #FAB12F;
+    padding: 30px;
+    color: white;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #111;
+}
+
+
+.event-box p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    line-height: 1.4;
+    letter-spacing: 1px;
+    color: black;
+}
+
+.event-details {
+    background: #FA812F;
+    color: black;
+    padding: 20px;
+    min-width: 200px;
+    text-align: right;
+    border: 1px solid #111;
+}
+
+.event-details a {
+    background: #FA4032;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    display: inline-block;
+    margin-top: 10px;
+    border: 1px solid #111;
+}
+.event-details a:hover {
+    background: #FEF3E2;
+    color: black;
+}
+
+.lineup-section {
+    background-color: #FEF3E2;
+    color: black;
+    padding: 0;
+    margin: 0;
+    
+}
+
+.section-title {
+    background-color: #FEF3E2;
+    color: #FAB12F;
+    text-align: center;
+    font-size: 5rem;
+    font-family: 'Orbitron', sans-serif; /* Optional futuristic font */
+    padding: 1rem;
+}
+
+.artist-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #FAB12F;
+    padding: 2rem;
+    border: #111 1px solid;
+}
+
+.artist-name {
+    font-family: monospace;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+    flex-grow: 1;
+}
+
+.artist-details {
+    background-color: #FA812F;
+    padding: 1rem;
+    text-align: right;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 100px;
+    font-family: monospace;
+    font-size: 0.85rem;
+    border: #111 1px solid;
+}
+
+.ticket-btn {
+    background-color: #FA4032;
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem;
+    font-size: 0.75rem;
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+.lineup-section {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+.lineup-img {
+    width: 100%;
+    display: block;
+}
+
+.lineup-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    color: white;
+    text-align: center;
+}
+
+.lineup-overlay h2 {
+    background-color: #FAB12F;
+    color: white;
+    padding: 1rem 2rem;
+    font-family: 'Orbitron', sans-serif; 
+    font-size: 2rem;
+    margin-bottom: 0;
+    border: #111 1px solid;
+}
+
+.lineup-bottom-banner {
+    width: 100%;
+    background-color: #FEF3E2;
+    color: black;
+    padding: 0.5rem;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border: #111 1px solid;
+}
+
+.ticket-section {
+    width: 100%;
+    font-family: 'Courier New', monospace;
+    color: white;
+}
+
+.ticket-top {
+    display: flex;
+    height: 400px;
+}
+
+.ticket-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ticket-image {
+    flex: 1;
+}
+
+.ticket-info {
+    flex: 1;
+    background-color: #FAB12F;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border: #111 1px solid;
+}
+
+.ticket-info .pass-label {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+}
+
+.ticket-info .price {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+.ticket-info .buy-link {
+    font-size: 0.9rem;
+    color: white;
+    text-decoration: none;
+    border: 1px solid white;
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+    display: inline-block;
+    transition: background 0.3s;
+}
+
+.ticket-info .buy-link:hover {
+    background-color: white;
+    color: #FA812F;
+}
+
+.ticket-bottom {
+    position: relative;
+}
+
+.ticket-bottom img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border: #111 1px solid;
+}
+
+.bottom-text {
+    position: absolute;
+    bottom: 20px;
+    font-size: 1.5rem;
+    color: white;
+    padding: 0 1rem;
+}
+
+.bottom-text.left {
+    left: 0;
+}
+
+.bottom-text.right {
+    right: 0;
+}

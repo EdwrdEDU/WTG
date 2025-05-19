@@ -1,0 +1,190 @@
+/* Create Event Page Styles */
+
+/* Variables - matching your root colors */
+:root {
+    --wtg-primary-color: #f05537;
+    --wtg-secondary-color: black;
+    --wtg-text-light: #ffffff;
+    --wtg-text-dark: #39364f;
+    --wtg-accent-color: #3659e3;
+    --wtg-gray-light: #f8f9fa;
+    --wtg-gray: #e9ecef;
+    --wtg-gray-dark: #6c757d;
+    --wtg-success: #28a745;
+  }
+  
+  /* Page Header */
+  .events-page-header {
+   
+    color: var(--wtg-secondary-color);
+    padding: 3rem 0;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .events-page-header h1 {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Event Form Card */
+  .event-form-card {
+    border: none;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-bottom: 2rem;
+  }
+  
+  /* Form Navigation */
+  .event-form-nav {
+    display: flex;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--wtg-gray-light);
+  }
+  
+  .event-form-nav .nav-item {
+    flex: 1;
+    text-align: center;
+    padding: 1rem;
+    position: relative;
+    color: var(--wtg-gray-dark);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .event-form-nav .nav-item.active {
+    background-color: var(--wtg-primary-color);
+    color: var(--wtg-text-light);
+  }
+  
+  .event-form-nav .nav-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 60%;
+    width: 1px;
+    background-color: var(--wtg-gray);
+  }
+  
+  .event-form-nav .nav-number {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
+    text-align: center;
+    border-radius: 50%;
+    background-color: var(--wtg-gray);
+    margin-right: 8px;
+    color: var(--wtg-text-dark);
+  }
+  
+  .event-form-nav .nav-item.active .nav-number {
+    background-color: var(--wtg-text-light);
+    color: var(--wtg-primary-color);
+  }
+  
+  /* Form Sections */
+  .event-form-section {
+    padding: 0.5rem;
+  }
+  
+  .section-title {
+    color: var(--wtg-secondary-color);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+  
+  /* Form Elements */
+  .form-label {
+    font-weight: 500;
+    color: var(--wtg-text-dark);
+  }
+  
+  .required {
+    color: var(--wtg-primary-color);
+  }
+  
+  .form-control:focus, .form-select:focus {
+    border-color: var(--wtg-primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(240, 85, 55, 0.25);
+  }
+  
+  /* Buttons */
+  .btn-primary {
+    background-color: var(--wtg-primary-color);
+    border-color: var(--wtg-primary-color);
+  }
+  
+  .btn-primary:hover, .btn-primary:focus {
+    background-color: #e04525;
+    border-color: #e04525;
+  }
+  
+  .btn-success {
+    background-color: var(--wtg-success);
+    border-color: var(--wtg-success);
+  }
+  
+  /* Image Upload */
+  .image-upload-container {
+    border: 2px dashed var(--wtg-gray);
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .image-upload-container:hover {
+    border-color: var(--wtg-primary-color);
+  }
+  
+  /* Ticket Items */
+  .ticket-item {
+    background-color: var(--wtg-gray-light);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  /* Publish CTA */
+  .publish-cta {
+    background-color: var(--wtg-gray-light);
+    color: var(--wtg-text-dark);
+    border-radius: 8px;
+  }
+  
+  .publish-cta h4 {
+    color: var(--wtg-secondary-color);
+    font-weight: 600;
+  }
+  
+  /* Event Tips */
+  .event-tip-list {
+    padding-left: 1.5rem;
+  }
+  
+  .event-tip-list li {
+    margin-bottom: 0.8rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .event-form-nav .nav-text {
+      display: none;
+    }
+    
+    .event-form-nav .nav-item {
+      padding: 0.75rem 0.5rem;
+    }
+    
+    .event-form-nav .nav-number {
+      margin-right: 0;
+    }
+  }
