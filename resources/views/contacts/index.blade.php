@@ -29,14 +29,14 @@
                 Click "Contact Us" to learn about other ways that WTG? can support your events.
                 <a href="/privacy-policy" class="contacts-highlight-link">Read our Privacy Policy here.</a>
             </p>
-            <form class="contacts-form" method="POST" action="{{ route('contacts.submit') }}">
+            <form class="contacts-form" method="POST" action="/">
                 @csrf
                 <div class="contacts-form-row">
                     <div class="contacts-form-group contacts-form-half">
-                        <input type="text" name="first_name" class="contacts-input" placeholder="First name*" required value="{{ old('first_name', Auth::user()->first_name ?? '') }}">
+                        <input type="text" name="first_name" class="contacts-input" placeholder="First name*" required value="{{ old('first_name', Auth::user()->firstname ?? '') }}">
                     </div>
                     <div class="contacts-form-group contacts-form-half">
-                        <input type="text" name="surname" class="contacts-input" placeholder="Surname*" required value="{{ old('surname', Auth::user()->surname ?? '') }}">
+                        <input type="text" name="surname" class="contacts-input" placeholder="Surname*" required value="{{ old('surname', Auth::user()->lastname ?? '') }}">
                     </div>
                 </div>
                 <div class="contacts-form-group">
@@ -46,7 +46,7 @@
                     <input type="text" name="organization" class="contacts-input" placeholder="Organization*" required value="{{ old('organization', Auth::user()->organization ?? '') }}">
                 </div>
                 <div class="contacts-form-group">
-                    <input type="tel" name="phone" class="contacts-input" placeholder="Phone number*" required value="{{ old('phone', Auth::user()->phone ?? '') }}">
+                    <input type="tel" name="phone" class="contacts-input" placeholder="Phone number*" required value="{{ old('phone', Auth::user()->contact ?? '') }}">
                 </div>
                 <div class="contacts-form-group">
                     <select name="country" class="contacts-select" required>
