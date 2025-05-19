@@ -9,6 +9,7 @@ class Account extends Authenticatable
 {
     use HasFactory;
 
+    protected $primaryKey = 'id';
     protected $fillable = [
         'firstname',
         'lastname',
@@ -22,7 +23,7 @@ class Account extends Authenticatable
 
     public function events()
     {
-        return $this->hasMany(Event::class, 'account_id', 'id');
+        return $this->hasMany(Event::class);
     }
 }
 
