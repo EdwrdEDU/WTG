@@ -49,7 +49,7 @@
             <a class="nav-link" aria-current="page" href="/contacts">Contact Us</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/create-events">Create Events</a>
+            <a class="nav-link" href="/events/create">Create Events</a>
           </li>
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

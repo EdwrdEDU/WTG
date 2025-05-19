@@ -7,6 +7,9 @@
     </div>
 </div>
 
+
+
+
 <!-- Create Event Form -->
 <div class="container my-5">
     <div class="row">
@@ -15,7 +18,15 @@
                 <div class="card-body">
                     <form action="/events" method="POST" enctype="multipart/form-data">
                         @csrf
-                        
+                        @if ($errors->any())
+                            <div class="alert alert-danger">
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
                         <!-- Form Navigation -->
                         <div class="event-form-nav mb-4">
                             <div class="nav-item active">
@@ -127,13 +138,13 @@
                                 <div class="ticket-item p-3 border rounded mb-2">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" name="tickets[name]" placeholder="Ticket Name (e.g. General Admission)">
+                                            <input type="text" class="form-control" name="tickets_name" placeholder="Ticket Name (e.g. General Admission)">
                                         </div>
                                         <div class="col-md-3">
-                                            <input type="number" class="form-control" name="tickets[quantity]" placeholder="Quantity" min="1">
+                                            <input type="number" class="form-control" name="tickets_quantity" placeholder="Quantity" min="1">
                                         </div>
                                         <div class="col-md-3">
-                                            <input type="number" class="form-control" name="tickets[price]" placeholder="Price (₱)" min="0">
+                                            <input type="number" class="form-control" name="tickets_price" placeholder="Price (₱)" min="0">
                                         </div>
                                     </div>
                                 </div>

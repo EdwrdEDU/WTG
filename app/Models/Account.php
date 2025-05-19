@@ -19,6 +19,11 @@ class Account extends Authenticatable
     protected $hidden = [
         'password',
     ];
+
+    public function events()
+    {
+        return $this->hasMany(Event::class, 'account_id', 'id');
+    }
 }
 
 
