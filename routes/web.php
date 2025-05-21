@@ -2,11 +2,14 @@
 
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\InterestController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'landing');
+Route::get('/', [HomeController::class, 'landing']);
 
-Route::view('/home', 'homepage');
+Route::get('/home', [HomeController::class, 'index'])->name('homepage');
 
 Route::view('/contacts', 'contacts.index');
 
@@ -24,3 +27,5 @@ Route::post('/events', [EventController::class, 'store'])->name('events.store');
 
 Route::get('/search/page', fn () => view('account-view.search-page'));
 Route::get('/search', [EventController::class, 'search'])->name('events.search');
+
+Route::post('/interests/save', [App\Http\Controllers\InterestController::class, 'save'])->name('interests.save');
