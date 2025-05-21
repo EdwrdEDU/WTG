@@ -63,4 +63,20 @@ class HomeController extends Controller
 
         return view('homepage', compact('interests', 'featuredEvents', 'eventsNearYou'));
     }
+
+    public function landing()
+    {
+        return view('landing');
+    }
+
+    public function showInterests()
+    {
+        $interests = Interest::all();
+        return view('interests.index', compact('interests'));
+    }
+    public function showInterest($id)
+    {
+        $interest = Interest::findOrFail($id);
+        return view('interests.show', compact('interest'));
+    }
 }

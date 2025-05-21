@@ -229,7 +229,7 @@
   <div class="mt-5 mb-5 text-center p-5" style="background-color: #f8f7fa; border-radius: 8px;">
     <h2>Ready to host your own event?</h2>
     <p class="mb-4">It's easy to get started and reach thousands of potential attendees!</p>
-    <a href="/create-events" class="btn btn-lg" style="background-color: var(--primary-color); color: white;">Create Event</a>
+    <a href="/events/create" class="btn btn-lg" style="background-color: var(--primary-color); color: white;">Create Event</a>
   </div>
 
 

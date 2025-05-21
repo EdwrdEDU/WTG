@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Interest extends Model
 {
-    protected $fillable = ['name'];
+     protected $fillable = ['name', 'category'];
     
     public function users()
     {
