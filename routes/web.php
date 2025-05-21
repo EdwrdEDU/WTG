@@ -21,3 +21,6 @@ Route::post('/account/logout', [AccountController::class, 'logout'])->name('acco
 
 Route::get('/events/create', function () {return view('events.create');})->middleware('auth');
 Route::post('/events', [EventController::class, 'store'])->name('events.store');
+
+Route::get('/search/page', fn () => view('account-view.search-page'));
+Route::get('/search', [EventController::class, 'search'])->name('events.search');
