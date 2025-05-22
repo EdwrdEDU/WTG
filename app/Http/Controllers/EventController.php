@@ -10,7 +10,7 @@ class EventController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
             'organizer' => 'nullable|string|max:255',
             'description' => 'required|string',
@@ -21,21 +21,16 @@ class EventController extends Controller
             'start_time' => 'required',
             'venue_name' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:255',
-            'tickets' => 'nullable|json',
+            'ticket_name' => 'required|string|max:255',
+            'ticket_quantity' => 'required|integer|min:0',
+            'ticket_price' => 'required|numeric|min:0',
         ]);
 
-        $user = auth()->user();
+        $validated['account_id'] = auth()->id();
 
-        if (!$user || !$user->accounts) {
-            return redirect()->back()->withErrors(['account' => 'Your account is not linked.']);
-        }
+        Event::create($validated);
 
-        $data = $request->except(['account_id']);
-        $data['account_id'] = $user->accounts->id;
-
-        Event::create($data);
-
-        return redirect()->route('books.index')->with('success', 'Event added successfully!');
+        return redirect('/home')->with('success', 'Event created!');
     }
 }
 

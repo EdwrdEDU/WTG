@@ -138,13 +138,13 @@
                                 <div class="ticket-item p-3 border rounded mb-2">
                                     <div class="row">
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" name="tickets_name" placeholder="Ticket Name (e.g. General Admission)">
+                                            <input type="text" class="form-control" name="ticket_name" placeholder="Ticket Name (e.g. General Admission)">
                                         </div>
                                         <div class="col-md-3">
-                                            <input type="number" class="form-control" name="tickets_quantity" placeholder="Quantity" min="1">
+                                            <input type="number" class="form-control" name="ticket_quantity" placeholder="Quantity" min="1">
                                         </div>
                                         <div class="col-md-3">
-                                            <input type="number" class="form-control" name="tickets_price" placeholder="Price (₱)" min="0">
+                                            <input type="number" class="form-control" name="ticket_price" placeholder="Price (₱)" min="0">
                                         </div>
                                     </div>
                                 </div>
