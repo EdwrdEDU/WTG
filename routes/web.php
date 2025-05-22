@@ -75,6 +75,10 @@ Route::middleware('auth')->group(function () {
         return view('interests.index', compact('interests'));
     })->name('interests.index');
     
+    Route::post('/interests/toggle', [InterestController::class, 'toggle'])->name('interests.toggle');
+    Route::get('/interests/recommended-events', [InterestController::class, 'getRecommendedEvents'])->name('interests.recommended');
+
+
     // Event actions - require login
     Route::post('/events/{event}/save', function ($eventId) {
         // Save event logic

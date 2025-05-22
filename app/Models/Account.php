@@ -25,6 +25,13 @@ class Account extends Authenticatable
     {
         return $this->hasMany(Event::class);
     }
+
+
+    public function interests()
+    {
+    return $this->belongsToMany(Interest::class, 'account_interests');
+    }
+
 }
 
 
