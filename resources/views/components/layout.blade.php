@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>WTG? - Where To Go? Find Events Near You</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
@@ -18,9 +19,6 @@
   <link href="{{ asset('css/create-event.css') }}" rel="stylesheet">
   <link href="{{ asset('css/contacts.css') }}" rel="stylesheet">
   <link href="{{ asset('css/help-center.css') }}" rel="stylesheet">
-  
-  
- 
 </head>
 <body>
   <!-- Navbar -->
@@ -31,26 +29,36 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <form class="d-flex" role="search" action="{{ url('/search/page') }}" method="GET">
-  <input class="form-control" type="search" name="event" placeholder="Search Events" aria-label="Search"/>
-  <div class="vr mx-3" style="background-color: white;"></div>
-  <div class="d-flex align-items-center">
-    <span class="me-2">
-      <i class="bi bi-geo-alt text-white"></i>
-    </span>
-    <input class="form-control" type="search" name="location" placeholder="Location" aria-label="Search"/>
-  </div>
-  <button type="submit" class="btn">
-    <i class="bi bi-search text-white"></i>
-  </button>
-</form>
+        <input class="form-control" type="search" name="event" placeholder="Search Events" aria-label="Search"/>
+        <div class="vr mx-3" style="background-color: white;"></div>
+        <div class="d-flex align-items-center">
+          <span class="me-2">
+            <i class="bi bi-geo-alt text-white"></i>
+          </span>
+          <input class="form-control" type="search" name="location" placeholder="Location" aria-label="Search"/>
+        </div>
+        <button type="submit" class="btn">
+          <i class="bi bi-search text-white"></i>
+        </button>
+      </form>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0" style="gap: 15px; display: flex;">
+          <!-- Always visible -->
           <li class="nav-item">
             <a class="nav-link" aria-current="page" href="/contacts">Contact Us</a>
           </li>
+          
+          <!-- Only show when logged in -->
+          @auth
           <li class="nav-item">
             <a class="nav-link" href="/events/create">Create Events</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">Dashboard</a>
+          </li>
+          @endauth
+          
+          <!-- Always visible -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Help Center
@@ -59,48 +67,67 @@
               <li><a class="dropdown-item" href="/help-center">Help Center</a></li>
             </ul>
           </li>
-            @guest
-            <li class="nav-item">
+          
+          <!-- Only show when NOT logged in -->
+          @guest
+          <li class="nav-item">
             <a class="nav-link" href="/account/login">Log In</a>
-            </li>
-            <li class="nav-item">
+          </li>
+          <li class="nav-item">
             <a class="nav-link" href="/account/create">Sign Up</a>
-            </li>
-            @endguest
+          </li>
+          @endguest
 
-            @auth
-            <li class="nav-item dropdown">
+          <!-- Only show when logged in -->
+          @auth
+          <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle p-0" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent; border: none; border-radius: 50%; width: 52px; height: 40px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
               <i class="bi bi-person-circle fs-3"></i>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
               <li>
-              <a class="dropdown-item" href="/account/saved">
-                <i class="bi bi-bookmark me-2"></i>Saved
-              </a>
-              </li>
-              <li>
-              <a class="dropdown-item" href="/account/events">
-                <i class="bi bi-calendar-event me-2"></i>Events
-              </a>
-              </li>
-              <li>
-              <a class="dropdown-item" href="/account/settings">
-                <i class="bi bi-gear me-2"></i>Settings
-              </a>
+                <div class="dropdown-item-text">
+                  <small>{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</small>
+                </div>
               </li>
               <li><hr class="dropdown-divider"></li>
               <li>
-              <form method="POST" action="{{ route('account.logout') }}">
-                @csrf
-                <button class="dropdown-item" type="submit">
-                <i class="bi bi-box-arrow-right me-2"></i>Logout
-                </button>
-              </form>
+                <a class="dropdown-item" href="/dashboard">
+                  <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/profile">
+                  <i class="bi bi-person me-2"></i>Profile
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/saved-events">
+                  <i class="bi bi-bookmark me-2"></i>Saved Events
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/my-events">
+                  <i class="bi bi-calendar-event me-2"></i>My Events
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/settings">
+                  <i class="bi bi-gear me-2"></i>Settings
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form method="POST" action="{{ route('account.logout') }}">
+                  @csrf
+                  <button class="dropdown-item" type="submit">
+                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                  </button>
+                </form>
               </li>
             </ul>
-            </li>
-            @endauth
+          </li>
+          @endauth
         </ul>
       </div>
     </div>
@@ -166,7 +193,5 @@
       location.reload();
     }
   </script>
-
-
 </body>
 </html>

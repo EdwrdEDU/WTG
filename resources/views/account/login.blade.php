@@ -26,7 +26,7 @@
             </button>
         </form>
         <div class="register-link">
-            <p>Don't have an account? <a href="/create-account">Sign up</a></p>
+            <p>Don't have an account? <a href="/account/create">Sign up</a></p>
         </div>
         <div class="terms-notice">
             <p>By signing in, you agree to WTG?'s

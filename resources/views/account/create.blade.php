@@ -41,7 +41,7 @@
             </form>
             <div class="form-footer">
                 <div class="footer-section">
-                    <p class="already">Already have an account? <a href="/login" class="text-blue-600">Login here</a>.</p>
+                   <p class="already">Already have an account? <a href="/account/login" class="text-blue-600">Login here</a>.</p>
                 </div>
             </div>
             <div class="terms-note">
