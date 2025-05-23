@@ -20,6 +20,7 @@
   <link href="{{ asset('css/contacts.css') }}" rel="stylesheet">
   <link href="{{ asset('css/help-center.css') }}" rel="stylesheet">
   <link href="{{ asset('css/search-page.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/settings.css') }}" rel="stylesheet">
 </head>
 <body>
   <!-- Navbar -->
