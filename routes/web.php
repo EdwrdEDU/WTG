@@ -5,6 +5,7 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\InterestController;
+use App\Http\Controllers\SavedEventController; // Add this import
 use Illuminate\Support\Facades\Route;
 
 // Public routes (accessible without login)
@@ -23,7 +24,7 @@ Route::post('/account/store', [AccountController::class, 'store'])->name('accoun
 Route::get('/search/page', fn () => view('account-view.search-page'));
 Route::get('/search', [EventController::class, 'search'])->name('events.search');
 
-// PROTECTED ROUTES - require login (same as your create event)
+// PROTECTED ROUTES - require login
 Route::middleware('auth')->group(function () {
     // Logout
     Route::post('/account/logout', [AccountController::class, 'logout'])->name('account.logout');
@@ -38,6 +39,15 @@ Route::middleware('auth')->group(function () {
     Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
     Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
     
+    // SAVED EVENTS ROUTES - Add these!
+    Route::get('/saved-events', [SavedEventController::class, 'index'])->name('saved-events');
+    Route::post('/saved-events/external', [SavedEventController::class, 'saveExternalEvent'])->name('saved-events.external');
+    Route::delete('/saved-events/external', [SavedEventController::class, 'unsaveExternalEvent'])->name('saved-events.external.delete');
+    Route::post('/saved-events/check', [SavedEventController::class, 'checkSaved'])->name('saved-events.check');
+    Route::delete('/saved-events/{savedEvent}', [SavedEventController::class, 'destroy'])->name('saved-events.destroy');
+    Route::post('/events/{event}/save', [SavedEventController::class, 'saveLocalEvent'])->name('events.save');
+    Route::delete('/events/{event}/unsave', [SavedEventController::class, 'unsaveLocalEvent'])->name('events.unsave');
+    
     // User Dashboard - require login
     Route::get('/dashboard', function () {
         $user = auth()->user();
@@ -50,12 +60,6 @@ Route::middleware('auth')->group(function () {
         return view('profile.show', ['user' => auth()->user()]);
     })->name('profile');
     Route::put('/profile', [AccountController::class, 'updateProfile'])->name('profile.update');
-    
-    // Saved Events - require login
-    Route::get('/saved-events', function () {
-        $savedEvents = auth()->user()->savedEvents ?? collect();
-        return view('saved-events.index', compact('savedEvents'));
-    })->name('saved-events');
     
     // My Events - require login
     Route::get('/my-events', function () {
@@ -77,16 +81,4 @@ Route::middleware('auth')->group(function () {
     
     Route::post('/interests/toggle', [InterestController::class, 'toggle'])->name('interests.toggle');
     Route::get('/interests/recommended-events', [InterestController::class, 'getRecommendedEvents'])->name('interests.recommended');
-
-
-    // Event actions - require login
-    Route::post('/events/{event}/save', function ($eventId) {
-        // Save event logic
-        return response()->json(['success' => true, 'message' => 'Event saved!']);
-    })->name('events.save');
-    
-    Route::delete('/events/{event}/unsave', function ($eventId) {
-        // Unsave event logic
-        return response()->json(['success' => true, 'message' => 'Event removed!']);
-    })->name('events.unsave');
 });

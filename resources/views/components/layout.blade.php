@@ -374,7 +374,7 @@ function unsaveExternalEvent(button) {
     fetch('/saved-events/external', {
         method: 'DELETE',
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta-name="csrf-token"]').getAttribute('content'),
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(eventData)
