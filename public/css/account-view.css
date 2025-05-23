@@ -16,6 +16,18 @@
   }
   
   /* Filter Page Title Section */
+
+  .filter-section {
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .filter-title {
+            font-size: 1rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
   .filter-page-title-section {
     padding: 20px 0;
   }
