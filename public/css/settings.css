@@ -136,6 +136,8 @@
 .lastname-input-group,
 .email-input-group,
 .country-input-group,
+.phone-input-group,
+.date-of-birth-input-group,
 .bio-textarea-group {
     display: flex;
     flex-direction: column;
@@ -145,6 +147,8 @@
 .lastname-label,
 .email-address-label,
 .user-country-label,
+.user-phone-label,
+.user-date-of-birth-label,
 .biography-label {
     font-weight: 500;
     color: var(--text-dark);
@@ -156,6 +160,8 @@
 .lastname-text-input,
 .email-address-input,
 .user-country-input,
+.user-phone-input,
+.user-date-of-birth-input,
 .user-biography-input {
     padding: 10px 12px;
     border: 1px solid var(--border-color);
@@ -168,10 +174,33 @@
 .lastname-text-input:focus,
 .email-address-input:focus,
 .user-country-input:focus,
+.user-phone-input:focus,
+.user-date-of-birth-input:focus,
 .user-biography-input:focus {
     outline: none;
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(240, 85, 55, 0.1);
+}
+
+/* Special styling for date input */
+.user-date-of-birth-input {
+    cursor: pointer;
+}
+
+.user-date-of-birth-input::-webkit-calendar-picker-indicator {
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.user-date-of-birth-input::-webkit-calendar-picker-indicator:hover {
+    background-color: var(--bg-light);
+}
+
+.user-phone-input::placeholder {
+    color: var(--text-muted);
 }
 
 .user-biography-input {
@@ -224,6 +253,13 @@
 
 .save-profile-changes-btn:hover {
     background-color: var(--primary-hover);
+}
+
+/* Error state styling */
+.user-phone-input.error,
+.user-date-of-birth-input.error {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
 }
 
 /* Responsive Design */

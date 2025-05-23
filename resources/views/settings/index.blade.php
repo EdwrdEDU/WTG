@@ -77,6 +77,20 @@
                                    value="{{ old('country', auth()->user()->country) }}" 
                                    class="user-country-input" placeholder="e.g. United States">
                         </div>
+                        
+                        <div class="phone-input-group">
+                            <label for="user-phone-field" class="user-phone-label">Phone</label>
+                            <input type="tel" id="user-phone-field" name="phone" 
+                                   value="{{ old('phone', auth()->user()->phone) }}" 
+                                   class="user-phone-input" placeholder="e.g. +1 (555) 123-4567">
+                        </div>
+                        
+                        <div class="date-of-birth-input-group">
+                            <label for="user-date-of-birth-field" class="user-date-of-birth-label">Date of Birth</label>
+                            <input type="date" id="user-date-of-birth-field" name="date_of_birth" 
+                                   value="{{ old('date_of_birth', auth()->user()->date_of_birth) }}" 
+                                   class="user-date-of-birth-input">
+                        </div>
                     </div>
                 </div>
 

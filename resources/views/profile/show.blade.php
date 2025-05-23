@@ -2,7 +2,6 @@
  <profile-wrapper>
 <profile-header>
 <profile-title>My Profile</profile-title>
-<!-- <profile-subtitle>Your Personal Information</profile-subtitle> -->
 </profile-header>
 <profile-card>
 <profile-card-header>

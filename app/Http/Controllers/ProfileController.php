@@ -9,11 +9,17 @@ use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
+    /**
+     * Show the profile settings form
+     */
     public function edit()
     {
         return view('profile.edit');
     }
 
+    /**
+     * Update the user's profile
+     */
     public function update(Request $request)
     {
         $user = Auth::user();
@@ -29,6 +35,8 @@ class ProfileController extends Controller
                 Rule::unique('accounts')->ignore($user->id)
             ],
             'country' => 'nullable|string|max:255',
+            'phone' => 'nullable|string|max:20',
+            'date_of_birth' => 'nullable|date|before:today',
             'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
@@ -49,6 +57,8 @@ class ProfileController extends Controller
         $user->lastname = $request->lastname;
         $user->email = $request->email;
         $user->country = $request->country;
+        $user->phone = $request->phone;
+        $user->date_of_birth = $request->date_of_birth;
         
         $user->save();
 
