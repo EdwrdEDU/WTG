@@ -3,6 +3,7 @@
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\InterestController;
 use App\Http\Controllers\SavedEventController; // Add this import
@@ -84,6 +85,13 @@ Route::middleware('auth')->group(function () {
         return view('interests.index', compact('interests'));
     })->name('interests.index');
     
+
+
+    // settings profile update
+    Route::middleware('auth')->group(function () {
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+});
     Route::post('/interests/toggle', [InterestController::class, 'toggle'])->name('interests.toggle');
     Route::get('/interests/recommended-events', [InterestController::class, 'getRecommendedEvents'])->name('interests.recommended');
 });

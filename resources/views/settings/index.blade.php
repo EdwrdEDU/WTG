@@ -7,6 +7,23 @@
 
     <div class="profile-customization-content">
         <div class="user-profile-settings-card">
+            <!-- Success/Error Messages -->
+            @if(session('success'))
+                <div class="alert alert-success" style="background-color: #d4edda; color: #155724; padding: 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+                    <ul style="margin: 0; padding-left: 20px;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="profile-update-form">
                 @csrf
                 @method('PUT')
@@ -16,7 +33,7 @@
                     <h3 class="avatar-section-heading">Profile Picture</h3>
                     <div class="user-avatar-upload-area">
                         <div class="current-avatar-preview-container">
-                            <img src="{{ auth()->user()->profile_image ?? asset('images/default-avatar.png') }}" 
+                            <img src="{{ auth()->user()->profile_image ? asset('storage/' . auth()->user()->profile_image) : asset('images/default-avatar.png') }}" 
                                  alt="Profile Picture" id="user-avatar-display-image" class="current-user-avatar">
                         </div>
                         <div class="avatar-upload-controls">
@@ -35,15 +52,15 @@
                     <div class="user-details-form-grid">
                         <div class="firstname-input-group">
                             <label for="user-first-name-field" class="firstname-label">First Name</label>
-                            <input type="text" id="user-first-name-field" name="first_name" 
-                                   value="{{ old('first_name', auth()->user()->first_name) }}" 
+                            <input type="text" id="user-first-name-field" name="firstname" 
+                                   value="{{ old('firstname', auth()->user()->firstname) }}" 
                                    class="firstname-text-input" required>
                         </div>
                         
                         <div class="lastname-input-group">
                             <label for="user-last-name-field" class="lastname-label">Last Name</label>
-                            <input type="text" id="user-last-name-field" name="last_name" 
-                                   value="{{ old('last_name', auth()->user()->last_name) }}" 
+                            <input type="text" id="user-last-name-field" name="lastname" 
+                                   value="{{ old('lastname', auth()->user()->lastname) }}" 
                                    class="lastname-text-input" required>
                         </div>
                         
@@ -60,17 +77,6 @@
                                    value="{{ old('country', auth()->user()->country) }}" 
                                    class="user-country-input" placeholder="e.g. United States">
                         </div>
-                    </div>
-                </div>
-
-                <!-- Bio Section -->
-                <div class="user-bio-customization-section">
-                    <h3 class="bio-section-heading">About</h3>
-                    <div class="bio-textarea-group">
-                        <label for="user-biography-textarea" class="biography-label">Bio</label>
-                        <textarea id="user-biography-textarea" name="bio" class="user-biography-input" rows="4" 
-                                  placeholder="Tell us a little about yourself...">{{ old('bio', auth()->user()->bio) }}</textarea>
-                        <small class="bio-character-counter">0/500 characters</small>
                     </div>
                 </div>
 
@@ -95,25 +101,6 @@ document.getElementById('user-profile-image-input').addEventListener('change', f
         };
         imageReader.readAsDataURL(selectedFile);
     }
-});
-
-// Character counter for bio
-document.getElementById('user-biography-textarea').addEventListener('input', function() {
-    const currentCharCount = this.value.length;
-    const maxCharLimit = 500;
-    document.querySelector('.bio-character-counter').textContent = `${currentCharCount}/${maxCharLimit} characters`;
-    
-    if (currentCharCount > maxCharLimit) {
-        this.value = this.value.substring(0, maxCharLimit);
-        document.querySelector('.bio-character-counter').textContent = `${maxCharLimit}/${maxCharLimit} characters`;
-    }
-});
-
-// Initialize character count
-document.addEventListener('DOMContentLoaded', function() {
-    const biographyTextarea = document.getElementById('user-biography-textarea');
-    const initialCharCount = biographyTextarea.value.length;
-    document.querySelector('.bio-character-counter').textContent = `${initialCharCount}/500 characters`;
 });
 </script>
 </x-layout>

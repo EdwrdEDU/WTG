@@ -21,6 +21,7 @@
   <link href="{{ asset('css/help-center.css') }}" rel="stylesheet">
   <link href="{{ asset('css/search-page.css') }}" rel="stylesheet">
   <link href="{{ asset('css/settings.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/profile.css') }}" rel="stylesheet">
 </head>
 <body>
   <!-- Navbar -->

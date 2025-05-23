@@ -1,0 +1,213 @@
+profile-wrapper,
+profile-header,
+profile-title,
+profile-subtitle,
+profile-card,
+profile-card-header,
+profile-card-body,
+profile-section-title,
+profile-info-item,
+profile-label,
+profile-value,
+profile-actions,
+profile-button {
+    display: block;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Main wrapper */
+profile-wrapper {
+    max-width: 560px;
+    margin: 40px auto;
+    padding: 0 24px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Header section */
+profile-header {
+    margin-bottom: 32px;
+    text-align: center;
+}
+
+profile-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: #ff4500;
+    margin-bottom: 8px;
+    letter-spacing: -0.025em;
+}
+
+profile-subtitle {
+    font-size: 1rem;
+    color: #666;
+    font-weight: 400;
+}
+
+/* Card styles */
+profile-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+profile-card-header {
+    padding: 24px 24px 0;
+}
+
+profile-section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+}
+
+profile-card-body {
+    padding: 0 24px 24px;
+}
+
+/* Info items */
+profile-info-item {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 16px;
+    gap: 12px;
+}
+
+profile-info-item:last-of-type {
+    margin-bottom: 24px;
+}
+
+profile-label {
+    font-weight: 500;
+    color: #ff4500;
+    min-width: 110px;
+    font-size: 0.9rem;
+}
+
+profile-value {
+    color: #333;
+    font-weight: 400;
+    flex: 1;
+}
+
+/* Actions section */
+profile-actions {
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+/* Primary button - Edit Profile */
+.profile-button {
+    display: inline-block;
+    background: #ff4500;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: 1px solid #ff4500;
+}
+
+.profile-button:hover {
+    background: #e63d00;
+    border-color: #e63d00;
+    color: white;
+    text-decoration: none;
+}
+
+.profile-button:focus {
+    outline: 2px solid #ff4500;
+    outline-offset: 2px;
+}
+
+/* Secondary button - Back to Dashboard */
+.profile-button-secondary {
+    display: inline-block;
+    background: transparent;
+    color: #666;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 400;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: 1px solid #e5e5e5;
+}
+
+.profile-button-secondary:hover {
+    background: #f8f8f8;
+    color: #333;
+    text-decoration: none;
+    border-color: #d0d0d0;
+}
+
+.profile-button-secondary:focus {
+    outline: 2px solid #ff4500;
+    outline-offset: 2px;
+}
+
+/* Responsive design */
+@media (max-width: 640px) {
+    profile-wrapper {
+        margin: 24px auto;
+        padding: 0 16px;
+    }
+    
+    profile-title {
+        font-size: 1.875rem;
+    }
+    
+    profile-card-header,
+    profile-card-body {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    profile-info-item {
+        flex-direction: column;
+        gap: 4px;
+        align-items: flex-start;
+    }
+    
+    profile-label {
+        min-width: auto;
+    }
+    
+    profile-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .profile-button,
+    .profile-button-secondary {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    profile-wrapper {
+        margin: 16px auto;
+    }
+    
+    profile-title {
+        font-size: 1.75rem;
+    }
+    
+    profile-card-header,
+    profile-card-body {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+}

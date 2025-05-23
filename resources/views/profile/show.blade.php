@@ -1,17 +1,36 @@
 <x-layout>
-    <div class="container mt-4">
-        <h1>My Profile</h1>
-        <p>This section is only accessible when logged in.</p>
+    <profile-wrapper>
+        <profile-header>
+            <profile-title>My Profile</profile-title>
+           <!--  <profile-subtitle>Your Personal Information</profile-subtitle> -->
+        </profile-header>
         
-        <div class="card">
-            <div class="card-body">
-                <h5>Profile Information</h5>
-                <p><strong>Name:</strong> {{ $user->firstname }} {{ $user->lastname }}</p>
-                <p><strong>Email:</strong> {{ $user->email }}</p>
-                <p><strong>Member since:</strong> {{ $user->created_at->format('M d, Y') }}</p>
+        <profile-card>
+            <profile-card-header>
+                <profile-section-title>Profile Information</profile-section-title>
+            </profile-card-header>
+            
+            <profile-card-body>
+                <profile-info-item>
+                    <profile-label>Name:</profile-label>
+                    <profile-value>{{ $user->firstname }} {{ $user->lastname }}</profile-value>
+                </profile-info-item>
                 
-                <a href="{{ route('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
-            </div>
-        </div>
-    </div>
+                <profile-info-item>
+                    <profile-label>Email:</profile-label>
+                    <profile-value>{{ $user->email }}</profile-value>
+                </profile-info-item>
+                
+                <profile-info-item>
+                    <profile-label>Member since:</profile-label>
+                    <profile-value>{{ $user->created_at->format('M d, Y') }}</profile-value>
+                </profile-info-item>
+                
+                <profile-actions>
+                    <a href="{{ route('settings') }}" class="profile-button">Edit Profile</a>
+                    <a href="{{ route('dashboard') }}" class="profile-button-secondary">Back to Dashboard</a>
+                </profile-actions>
+            </profile-card-body>
+        </profile-card>
+    </profile-wrapper>
 </x-layout>
