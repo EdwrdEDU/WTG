@@ -49,11 +49,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/events/{event}/unsave', [SavedEventController::class, 'unsaveLocalEvent'])->name('events.unsave');
     
     // User Dashboard - require login
-    Route::get('/dashboard', function () {
-        $user = auth()->user();
-        $userEvents = $user->events()->latest()->take(5)->get();
-        return view('dashboard.index', compact('user', 'userEvents'));
-    })->name('dashboard');
+ Route::get('/dashboard', function () {
+    $user = auth()->user();
+    $userEvents = $user->events()->latest()->take(5)->get();
+    $savedEventsCount = $user->savedEvents()->count(); 
+    return view('dashboard.index', compact('user', 'userEvents', 'savedEventsCount'));
+})->name('dashboard');
     
     // Profile management - require login
     Route::get('/profile', function () {

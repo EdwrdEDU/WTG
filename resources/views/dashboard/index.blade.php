@@ -18,7 +18,7 @@
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-body text-center">
-                                <h5 class="card-title">0</h5>
+                                <h5 class="card-title">{{ $savedEventsCount ?? 0 }}</h5>
                                 <p class="card-text">Saved Events</p>
                                 <a href="{{ route('saved-events') }}" class="btn btn-primary">View Saved</a>
                             </div>
