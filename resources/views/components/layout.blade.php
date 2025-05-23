@@ -29,19 +29,19 @@
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <form class="d-flex" role="search" action="{{ url('/search/page') }}" method="GET">
-        <input class="form-control" type="search" name="event" placeholder="Search Events" aria-label="Search"/>
-        <div class="vr mx-3" style="background-color: white;"></div>
-        <div class="d-flex align-items-center">
-          <span class="me-2">
+      <form class="d-flex" role="search" action="{{ route('events.search') }}" method="GET">
+    <input class="form-control" type="search" name="event" placeholder="Search Events" aria-label="Search"/>
+    <div class="vr mx-3" style="background-color: white;"></div>
+    <div class="d-flex align-items-center">
+        <span class="me-2">
             <i class="bi bi-geo-alt text-white"></i>
-          </span>
-          <input class="form-control" type="search" name="location" placeholder="Location" aria-label="Search"/>
-        </div>
-        <button type="submit" class="btn">
-          <i class="bi bi-search text-white"></i>
-        </button>
-      </form>
+        </span>
+        <input class="form-control" type="search" name="location" placeholder="Location" aria-label="Search"/>
+    </div>
+    <button type="submit" class="btn">
+        <i class="bi bi-search text-white"></i>
+    </button>
+</form>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0" style="gap: 15px; display: flex;">
           <!-- Always visible -->

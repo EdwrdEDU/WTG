@@ -39,8 +39,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
     Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
     Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
-    Route::get('/search', [EventController::class, 'search'])->name('events.search');
-    
+  
+
     // SAVED EVENTS ROUTES - Add these!
     Route::get('/saved-events', [SavedEventController::class, 'index'])->name('saved-events');
     Route::post('/saved-events/external', [SavedEventController::class, 'saveExternalEvent'])->name('saved-events.external');
