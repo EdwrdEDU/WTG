@@ -36,28 +36,41 @@
             </div>
         </div>
         
-        <div class="col-md-4">
-            <!-- Ticket Info -->
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">{{ $event->ticket_name }}</h5>
-                    <h3 class="text-primary">₱{{ number_format($event->ticket_price, 2) }}</h3>
-                    <p class="text-muted">{{ $event->ticket_quantity }} tickets available</p>
-                    
-                    @if($event->account_id === auth()->id())
-                        <!-- Owner actions -->
-                        <div class="d-grid gap-2">
-                            <a href="{{ route('events.edit', $event) }}" class="btn btn-primary">Edit Event</a>
-                            <button class="btn btn-danger" onclick="confirmDelete({{ $event->id }})">Delete Event</button>
-                        </div>
-                    @else
-                        <!-- Visitor actions -->
-                        <div class="d-grid">
-                            <button class="btn btn-primary">Get Tickets</button>
-                        </div>
-                    @endif
+ <div class="col-md-4">
+    <!-- Ticket Info -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ $event->ticket_name }}</h5>
+            <h3 class="text-primary">₱{{ number_format($event->ticket_price, 2) }}</h3>
+            <p class="text-muted">{{ $event->ticket_quantity }} tickets available</p>
+            
+            @if($event->account_id === auth()->id())
+                <!-- Owner actions -->
+                <div class="d-grid gap-2">
+                    <a href="{{ route('events.edit', $event) }}" class="btn btn-primary">Edit Event</a>
+                    <button class="btn btn-danger" onclick="confirmDelete({{ $event->id }})">Delete Event</button>
                 </div>
-            </div>
+            @else
+                <!-- Visitor actions -->
+                <div class="d-grid gap-2">
+                    <button class="btn btn-primary">Get Tickets</button>
+                    
+                    @auth
+                        <!-- Save button for logged in users (LOCAL EVENT) -->
+                        <button class="save-event-btn btn btn-outline-danger" 
+                                data-event-id="{{ $event->id }}" 
+                                data-event-type="local"
+                                title="Save Event">
+                            <i class="bi bi-heart"></i> Save Event
+                        </button>
+                    @else
+                        <!-- Login prompt for guests -->
+                        <a href="{{ route('login') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-heart"></i> Login to Save
+                        </a>
+                    @endauth
+                </div>
+            @endif
         </div>
     </div>
 </div>

@@ -31,31 +31,56 @@
             <i class="bi bi-arrow-right"></i>
         </a>
     </div>
-    <div class="row">
-        @forelse ($featuredEvents as $event)
-            <div class="col-md-4">
-                <div class="event-card">
-                    <div class="position-relative">
-                        <img src="{{ $event['images'][0]['url'] ?? 'default-image.jpg' }}" class="event-img" alt="Event image">
-                        <span class="featured-badge">Featured</span>
+ <div class="row">
+    @forelse ($featuredEvents as $event)
+        <div class="col-md-4">
+            <div class="event-card">
+                <div class="position-relative">
+                    <img src="{{ $event['images'][0]['url'] ?? 'default-image.jpg' }}" class="event-img" alt="Event image">
+                    <span class="featured-badge">Featured</span>
+                    
+                    <!-- Add save button for logged-in users -->
+                    @auth
+                        <button class="btn btn-outline-danger save-external-event-btn position-absolute" 
+                                style="top: 10px; right: 50px; background: rgba(255,255,255,0.9);"
+                                data-event-id="{{ $event['id'] }}" 
+                                data-event-name="{{ $event['name'] }}"
+                                data-event-url="{{ $event['url'] ?? '' }}"
+                                data-event-image="{{ $event['images'][0]['url'] ?? '' }}"
+                                data-event-date="{{ $event['dates']['start']['dateTime'] ?? '' }}"
+                                data-venue-name="{{ $event['_embedded']['venues'][0]['name'] ?? '' }}"
+                                data-venue-address="{{ $event['_embedded']['venues'][0]['address']['line1'] ?? '' }}"
+                                data-price-info="{{ isset($event['priceRanges']) ? $event['priceRanges'][0]['min'] . '-' . $event['priceRanges'][0]['max'] . ' ' . $event['priceRanges'][0]['currency'] : 'Free' }}"
+                                title="Save Event">
+                            <i class="bi bi-heart"></i>
+                        </button>
+                    @endauth
+                </div>
+                <div class="p-3">
+                    <div class="event-date">
+                        {{ \Carbon\Carbon::parse($event['dates']['start']['dateTime'])->format('D, M j • g:i A') }}
                     </div>
-                    <div class="p-3">
-                        <div class="event-date">
-                            {{ \Carbon\Carbon::parse($event['dates']['start']['dateTime'])->format('D, M j • g:i A') }}
-                        </div>
-                        <h3 class="event-title">{{ $event['name'] }}</h3>
-                        <div class="event-location">
-                            <i class="bi bi-geo-alt"></i>
-                            {{ $event['_embedded']['venues'][0]['name'] ?? 'Location not available' }}
-                        </div>
+                    <h3 class="event-title">{{ $event['name'] }}</h3>
+                    <div class="event-location">
+                        <i class="bi bi-geo-alt"></i>
+                        {{ $event['_embedded']['venues'][0]['name'] ?? 'Location not available' }}
+                    </div>
+                    
+                    <div class="d-flex justify-content-between align-items-center mt-3">
                         <a href="{{ $event['url'] ?? '#' }}" target="_blank" class="event-link">View Event</a>
+                        
+                        @guest
+                            <a href="{{ route('login') }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-heart"></i> Save
+                            </a>
+                        @endguest
                     </div>
                 </div>
             </div>
-        @empty
-            <p>No featured events available at this time.</p>
-        @endforelse
-    </div>
+        </div>
+    @empty
+        <p>No featured events available at this time.</p>
+    @endforelse
 </div>
 
 <!-- Popular Categories -->
@@ -154,6 +179,22 @@
             <div class="card event-card">
                 <div class="position-relative">
                     <img src="{{ $event['images'][0]['url'] ?? asset('images/default-image.jpg') }}" class="card-img-top" alt="Event">
+                    
+                    <!-- Add save button here for logged-in users -->
+                    @auth
+                        <button class="btn btn-outline-danger save-external-event-btn position-absolute top-0 end-0 m-2" 
+                                data-event-id="{{ $event['id'] }}" 
+                                data-event-name="{{ $event['name'] }}"
+                                data-event-url="{{ $event['url'] ?? '' }}"
+                                data-event-image="{{ $event['images'][0]['url'] ?? '' }}"
+                                data-event-date="{{ $event['dates']['start']['dateTime'] ?? '' }}"
+                                data-venue-name="{{ $event['_embedded']['venues'][0]['name'] ?? '' }}"
+                                data-venue-address="{{ $event['_embedded']['venues'][0]['address']['line1'] ?? '' }}"
+                                data-price-info="{{ isset($event['priceRanges']) ? $event['priceRanges'][0]['min'] . '-' . $event['priceRanges'][0]['max'] . ' ' . $event['priceRanges'][0]['currency'] : 'Free' }}"
+                                title="Save Event">
+                            <i class="bi bi-heart"></i>
+                        </button>
+                    @endauth
                 </div>
                 <div class="card-body p-3">
                     <h5 class="card-title">{{ $event['name'] }}</h5>
@@ -177,7 +218,18 @@
                             <i class="bi bi-person"></i> {{ number_format($event['attendance'] ?? 0) }} followers
                         </small>
                     </p>
-                   <a href="{{ $event['url'] ?? '#' }}" class="custom-event-btn" target="_blank">View Event</a>
+                    
+                    <!-- Update the button area -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="{{ $event['url'] ?? '#' }}" class="custom-event-btn" target="_blank">View Event</a>
+                        
+                        @guest
+                            <!-- Show login prompt for guests -->
+                            <a href="{{ route('login') }}" class="btn btn-outline-secondary btn-sm" title="Login to save events">
+                                <i class="bi bi-heart"></i>
+                            </a>
+                        @endguest
+                    </div>
                 </div>
             </div>
         </div>

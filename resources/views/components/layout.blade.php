@@ -192,6 +192,339 @@
     if (performance.navigation.type === 2) {
       location.reload();
     }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize save buttons
+    initializeSaveButtons();
+    
+    // Check saved status for all events on page load
+    if (isLoggedIn()) {
+        checkSavedStatus();
+    }
+});
+
+function initializeSaveButtons() {
+    // Handle local event save buttons
+    document.querySelectorAll('.save-event-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const eventId = this.getAttribute('data-event-id');
+            const isSaved = this.classList.contains('saved');
+            
+            if (isSaved) {
+                unsaveLocalEvent(eventId, this);
+            } else {
+                saveLocalEvent(eventId, this);
+            }
+        });
+    });
+
+    // Handle external event save buttons
+    document.querySelectorAll('.save-external-event-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const isSaved = this.classList.contains('saved');
+            
+            if (isSaved) {
+                unsaveExternalEvent(this);
+            } else {
+                saveExternalEvent(this);
+            }
+        });
+    });
+}
+
+function saveLocalEvent(eventId, button) {
+    if (!isLoggedIn()) {
+        showLoginPrompt();
+        return;
+    }
+
+    button.disabled = true;
+    const originalHtml = button.innerHTML;
+    button.innerHTML = '<i class="bi bi-heart-fill"></i> Saving...';
+    
+    fetch(`/events/${eventId}/save`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            button.classList.add('saved', 'btn-danger');
+            button.classList.remove('btn-outline-danger');
+            button.innerHTML = '<i class="bi bi-heart-fill"></i> Saved';
+            button.title = 'Remove from saved';
+            showToast(data.message, 'success');
+        } else {
+            button.innerHTML = originalHtml;
+            showToast(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        button.innerHTML = originalHtml;
+        showToast('Failed to save event. Please try again.', 'error');
+    })
+    .finally(() => {
+        button.disabled = false;
+    });
+}
+
+function unsaveLocalEvent(eventId, button) {
+    button.disabled = true;
+    const originalHtml = button.innerHTML;
+    button.innerHTML = '<i class="bi bi-heart"></i> Removing...';
+    
+    fetch(`/events/${eventId}/unsave`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            button.classList.remove('saved', 'btn-danger');
+            button.classList.add('btn-outline-danger');
+            button.innerHTML = '<i class="bi bi-heart"></i> Save Event';
+            button.title = 'Save Event';
+            showToast(data.message, 'success');
+        } else {
+            button.innerHTML = originalHtml;
+            showToast(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        button.innerHTML = originalHtml;
+        showToast('Failed to remove event. Please try again.', 'error');
+    })
+    .finally(() => {
+        button.disabled = false;
+    });
+}
+
+function saveExternalEvent(button) {
+    if (!isLoggedIn()) {
+        showLoginPrompt();
+        return;
+    }
+
+    button.disabled = true;
+    button.innerHTML = '<i class="bi bi-heart-fill"></i>';
+    
+    const eventData = {
+        event_id: button.getAttribute('data-event-id'),
+        event_name: button.getAttribute('data-event-name'),
+        event_url: button.getAttribute('data-event-url'),
+        event_image: button.getAttribute('data-event-image'),
+        event_date: button.getAttribute('data-event-date'),
+        venue_name: button.getAttribute('data-venue-name'),
+        venue_address: button.getAttribute('data-venue-address'),
+        price_info: button.getAttribute('data-price-info')
+    };
+    
+    fetch('/saved-events/external', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            button.classList.add('saved', 'btn-danger');
+            button.classList.remove('btn-outline-danger');
+            button.title = 'Remove from saved';
+            showToast(data.message, 'success');
+        } else {
+            button.innerHTML = '<i class="bi bi-heart"></i>';
+            showToast(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        button.innerHTML = '<i class="bi bi-heart"></i>';
+        showToast('Failed to save event. Please try again.', 'error');
+    })
+    .finally(() => {
+        button.disabled = false;
+    });
+}
+
+function unsaveExternalEvent(button) {
+    button.disabled = true;
+    button.innerHTML = '<i class="bi bi-heart"></i>';
+    
+    const eventData = {
+        event_id: button.getAttribute('data-event-id')
+    };
+    
+    fetch('/saved-events/external', {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta-name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            button.classList.remove('saved', 'btn-danger');
+            button.classList.add('btn-outline-danger');
+            button.title = 'Save Event';
+            showToast(data.message, 'success');
+        } else {
+            button.innerHTML = '<i class="bi bi-heart-fill"></i>';
+            showToast(data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        button.innerHTML = '<i class="bi bi-heart-fill"></i>';
+        showToast('Failed to remove event. Please try again.', 'error');
+    })
+    .finally(() => {
+        button.disabled = false;
+    });
+}
+
+function checkSavedStatus() {
+    // Check local events
+    document.querySelectorAll('.save-event-btn').forEach(button => {
+        const eventId = button.getAttribute('data-event-id');
+        
+        fetch('/saved-events/check', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                event_id: eventId,
+                type: 'local'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.saved) {
+                button.classList.add('saved', 'btn-danger');
+                button.classList.remove('btn-outline-danger');
+                button.innerHTML = '<i class="bi bi-heart-fill"></i> Saved';
+                button.title = 'Remove from saved';
+            }
+        })
+        .catch(error => console.error('Error checking saved status:', error));
+    });
+    
+    // Check external events
+    document.querySelectorAll('.save-external-event-btn').forEach(button => {
+        const eventId = button.getAttribute('data-event-id');
+        
+        fetch('/saved-events/check', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                event_id: eventId,
+                type: 'external'
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.saved) {
+                button.classList.add('saved', 'btn-danger');
+                button.classList.remove('btn-outline-danger');
+                button.innerHTML = '<i class="bi bi-heart-fill"></i>';
+                button.title = 'Remove from saved';
+            }
+        })
+        .catch(error => console.error('Error checking saved status:', error));
+    });
+}
+
+function isLoggedIn() {
+    // Check if user is authenticated
+    return document.querySelector('.navbar .dropdown-toggle') !== null;
+}
+
+function showLoginPrompt() {
+    if (confirm('Please log in to save events. Would you like to go to the login page?')) {
+        window.location.href = '/account/login';
+    }
+}
+
+function showToast(message, type = 'success') {
+    // Create toast container if it doesn't exist
+    let toastContainer = document.querySelector('.toast-container');
+    if (!toastContainer) {
+        toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+        document.body.appendChild(toastContainer);
+    }
+    
+    const toastId = 'toast-' + Date.now();
+    const toastHTML = `
+        <div id="${toastId}" class="toast ${type === 'success' ? 'bg-success' : 'bg-danger'} text-white" role="alert">
+            <div class="toast-header">
+                <strong class="me-auto">WTG?</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body">
+                ${message}
+            </div>
+        </div>
+    `;
+    
+    toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+    
+    const toast = document.getElementById(toastId);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    
+    // Remove toast after it's hidden
+    toast.addEventListener('hidden.bs.toast', function() {
+        this.remove();
+    });
+}
   </script>
+
+<!-- Save Button Styles -->
+<style>
+.save-event-btn, .save-external-event-btn {
+    transition: all 0.2s ease;
+    border-width: 2px;
+}
+
+.save-event-btn:hover, .save-external-event-btn:hover {
+    transform: scale(1.05);
+}
+
+.save-event-btn.saved, .save-external-event-btn.saved {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.save-event-btn.saved:hover, .save-external-event-btn.saved:hover {
+    background-color: #bb2d3b;
+    border-color: #bb2d3b;
+}
+</style>
+
 </body>
 </html>
