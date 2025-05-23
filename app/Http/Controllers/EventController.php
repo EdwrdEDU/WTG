@@ -6,6 +6,7 @@ use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http; 
+use Carbon\Carbon;
 
 class EventController extends Controller
 {
@@ -116,7 +117,7 @@ class EventController extends Controller
         return redirect('/my-events')->with('success', 'Event deleted successfully!');
     }
 
-public function search(Request $request)
+   public function search(Request $request)
     {
         // Get search parameters
         $query = $request->input('event');
