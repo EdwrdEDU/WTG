@@ -6,32 +6,50 @@
             <h1 class="contact-form-title">Get in Touch</h1>
             <p class="contact-form-subtitle">We'd love to hear from you</p>
         </div>
-        
+
+        <!-- Success Message -->
+        @if(session('success'))
+            <div class="alert alert-success" style="background-color: #d4edda; color: #155724; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <!-- Error Messages -->
+        @if($errors->any())
+            <div class="alert alert-danger" style="background-color: #f8d7da; color: #721c24; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                <ul style="margin: 0; padding-left: 1.5rem;">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <!-- Contact Form -->
         <div class="contact-form-card">
-            <form class="contact-form" >
+            <form class="contact-form" action="{{ route('contact.store') }}" method="POST">
                 @csrf
                 <div class="contact-form-grid">
                     <div class="contact-form-field">
                         <label for="contact_first_name" class="contact-form-label">First Name</label>
-                        <input type="text" id="contact_first_name" name="first_name" class="contact-form-input" required>
+                        <input type="text" id="contact_first_name" name="first_name" class="contact-form-input" value="{{ old('first_name') }}" required>
                     </div>
                     <div class="contact-form-field">
                         <label for="contact_last_name" class="contact-form-label">Last Name</label>
-                        <input type="text" id="contact_last_name" name="last_name" class="contact-form-input" required>
+                        <input type="text" id="contact_last_name" name="last_name" class="contact-form-input" value="{{ old('last_name') }}" required>
                     </div>
                 </div>
                 <div class="contact-form-field">
                     <label for="contact_email" class="contact-form-label">Email Address</label>
-                    <input type="email" id="contact_email" name="email" class="contact-form-input" required>
+                    <input type="email" id="contact_email" name="email" class="contact-form-input" value="{{ old('email') }}" required>
                 </div>
                 <div class="contact-form-field">
                     <label for="contact_phone" class="contact-form-label">Phone Number</label>
-                    <input type="tel" id="contact_phone" name="phone" class="contact-form-input" required>
+                    <input type="tel" id="contact_phone" name="phone" class="contact-form-input" value="{{ old('phone') }}" required>
                 </div>
                 <div class="contact-form-field">
                     <label for="contact_concern" class="contact-form-label">How can we help?</label>
-                    <textarea id="contact_concern" name="concern" class="contact-form-textarea" required></textarea>
+                    <textarea id="contact_concern" name="concern" class="contact-form-textarea" required>{{ old('concern') }}</textarea>
                 </div>
                 <div class="contact-form-button-wrapper">
                     <button type="submit" class="contact-form-submit">

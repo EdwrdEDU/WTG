@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\InterestController;
 use App\Http\Controllers\SavedEventController; // Add this import
+use App\Http\Controllers\ContactController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes (accessible without login)
@@ -56,7 +57,9 @@ Route::middleware('auth')->group(function () {
     $savedEventsCount = $user->savedEvents()->count(); 
     return view('dashboard.index', compact('user', 'userEvents', 'savedEventsCount'));
 })->name('dashboard');
-    
+    // Contacts form
+    Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
+    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
     // Profile management - require login
     Route::get('/profile', function () {
         return view('profile.show', ['user' => auth()->user()]);

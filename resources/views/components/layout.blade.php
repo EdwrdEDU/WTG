@@ -59,14 +59,11 @@
           @endauth
           
           <!-- Always visible -->
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <li class="nav-item">
+          <a class="nav-link" href="/help-center">
               Help Center
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="/help-center">Help Center</a></li>
-            </ul>
-          </li>
+          </a>
+                 </li>
           
           <!-- Only show when NOT logged in -->
           @guest
