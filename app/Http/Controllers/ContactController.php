@@ -39,43 +39,53 @@ class ContactController extends Controller
             'concern.required' => 'Please tell us how we can help you.',
         ]);
 
+        $contact = null;
+        $emailSent = false;
+
         try {
-            // Save to database
+            // Save to database first
             $contact = Contact::create($validated);
             Log::info('Contact form saved to database', ['contact_id' => $contact->id]);
 
-            // Send email notification to your Gmail
-            $contactEmail = env('CONTACT_EMAIL', 'your-default@gmail.com');
-            Mail::to($contactEmail)->send(new ContactFormSubmitted($validated));
-            Log::info('Contact form email sent', ['to' => $contactEmail]);
+            // Try to send email
+            $contactEmail = env('CONTACT_EMAIL');
+            
+            if ($contactEmail) {
+                try {
+                    Mail::to($contactEmail)->send(new ContactFormSubmitted($validated));
+                    $emailSent = true;
+                    Log::info('Contact form email sent successfully', ['to' => $contactEmail]);
+                } catch (\Exception $mailError) {
+                    Log::warning('Email sending failed but form was saved', [
+                        'contact_id' => $contact->id,
+                        'error' => $mailError->getMessage()
+                    ]);
+                }
+            } else {
+                Log::warning('CONTACT_EMAIL not configured, skipping email send');
+            }
 
-            // Redirect back with success message
-            return redirect()->back()->with('success', 
-                'Thank you for your message, ' . $validated['first_name'] . '! We\'ve received your inquiry and will get back to you soon. A notification has been sent to our team.'
-            );
+            // Success message based on what worked
+            if ($emailSent) {
+                $message = "Thank you for your message, {$validated['first_name']}! We've received your inquiry and will get back to you soon. A notification has been sent to our team.";
+            } else {
+                $message = "Thank you for your message, {$validated['first_name']}! We've received your inquiry and will get back to you soon.";
+            }
+
+            return redirect()->back()->with('success', $message);
             
         } catch (\Exception $e) {
             // Log the detailed error
             Log::error('Contact form submission error: ' . $e->getMessage(), [
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
+                'data' => $validated
             ]);
-            
-            // Try to save to database even if email fails
-            try {
-                Contact::create($validated);
-                return redirect()->back()->with('success', 
-                    'Your message has been saved! However, there was an issue sending the email notification. We\'ll still review your message soon.'
-                );
-            } catch (\Exception $dbError) {
-                Log::error('Database save also failed: ' . $dbError->getMessage());
-            }
             
             // Return with error message
             return redirect()->back()
                 ->withInput()
-                ->with('error', 'Sorry, there was a problem submitting your message. Please try again or contact us directly at ' . env('CONTACT_EMAIL', 'contact@wtg.com'));
+                ->with('error', 'Sorry, there was a problem submitting your message. Please try again or contact us directly at ' . (env('CONTACT_EMAIL', 'support@wtg.com')));
         }
     }
 }
