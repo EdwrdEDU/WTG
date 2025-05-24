@@ -379,8 +379,6 @@
     @endauth
   </div>
 
-
-
 <!-- JavaScript -->
 <script>
 // Category cards functionality with improvements
@@ -482,10 +480,9 @@ document.addEventListener("DOMContentLoaded", () => {
         eventsHTML += '</div>';
         eventContainer.innerHTML = eventsHTML;
         
-        // Initialize save buttons for the new events
-        if (typeof initializeSaveButtons === 'function') {
-          initializeSaveButtons();
-        }
+        // NO LONGER CALLING initializeSaveButtons() here!
+        // Event delegation in layout.blade.php handles all buttons automatically
+        console.log('New events loaded - event delegation will handle save buttons');
         
       } else {
         eventContainer.innerHTML = `
@@ -824,8 +821,6 @@ function getRecommendations() {
 }
 @endauth
 
-
-
 /**
  * Category Tabs Functionality
  * This script makes the category tabs in the Events Section work
@@ -962,10 +957,10 @@ document.addEventListener('DOMContentLoaded', function() {
           // Update the container
           container.innerHTML = eventsHTML;
           
-          // Initialize save buttons (if the function exists)
-          if (typeof initializeSaveButtons === 'function') {
-            initializeSaveButtons();
-          }
+          // NO LONGER CALLING initializeSaveButtons() here!
+          // Event delegation in layout.blade.php handles all buttons automatically
+          console.log('Category tab events loaded - event delegation will handle save buttons');
+          
         } else {
           // No events found
           container.innerHTML = `
@@ -1041,9 +1036,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (event.priceRanges && event.priceRanges.length > 0) {
       const price = event.priceRanges[0];
       if (price.min === price.max) {
-        priceInfo = `$${price.min}`;
+        priceInfo = `${price.min}`;
       } else {
-        priceInfo = `$${price.min} - $${price.max}`;
+        priceInfo = `${price.min} - ${price.max}`;
       }
     }
     
