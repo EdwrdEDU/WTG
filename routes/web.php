@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Route;
 // Public routes (accessible without login)
 Route::get('/', [HomeController::class, 'landing']);
 Route::get('/home', [HomeController::class, 'index'])->name('homepage');
-Route::view('
 // Contact form routes - PUBLIC (anyone can contact)
 Route::get('/contacts', [ContactController::class, 'show'])->name('contact.show');
 Route::post('/contacts', [ContactController::class, 'store'])->name('contact.store');
@@ -34,7 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/account/logout', [AccountController::class, 'logout'])->name('account.logout');
     
     // Event CRUD routes
-    Route::get('/events/create', function () {return view('events.create');})->name('events.create');
+    Route::get('/events/create', function () { return view('events.create'); })->name('events.create');
     Route::post('/events', [EventController::class, 'store'])->name('events.store');
     Route::get('/events/{event}', [EventController::class, 'show'])->name('events.show');
     Route::get('/events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
@@ -52,62 +51,29 @@ Route::middleware('auth')->group(function () {
     
     // User Dashboard - require login
     Route::get('/dashboard', function () {
-    $user = auth()->user();
-    $userEvents = $user->events()->latest()->take(5)->get();
-    $savedEventsCount = $user->savedEvents()->count(); 
-    return view('dashboard.index', compact('user', 'userEvents', 'savedEventsCount'));})->name('dashboard');
-    
-    // Contacts form
-    Route::get('/contact', [ContactController::class, 'show'])->name('contact.show');
-    Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
-
-    // My Events - require login
-    Route::get('/my-events', function () {$events = auth()->user()->events()->latest()->paginate(10);return view('my-events.index', compact('events'));})->name('my-events');
-    
-    // Settings - require login
-    Route::get('/settings', function () {return view('account.update', ['user' => auth()->user()]);})->name('account.update');
-    Route::put('/account/update', [AccountController::class, 'update'])->name('account.update');
-    Route::resource('accounts', AccountController::class);
-
-    // Interests management - require login
-    Route::post('/interests/save', [InterestController::class, 'save'])->name('interests.save');
-    Route::get('/interests', function () {$interests = auth()->user()->interests ?? collect();return view('interests.index', compact('interests'));})->name('interests.index');
-        
-    // settings profile update
-    // User Dashboard
-    Route::get('/dashboard', function () {
         $user = auth()->user();
         $userEvents = $user->events()->latest()->take(5)->get();
         $savedEventsCount = $user->savedEvents()->count(); 
         return view('dashboard.index', compact('user', 'userEvents', 'savedEventsCount'));
     })->name('dashboard');
     
-    // Profile management
-    Route::get('/profile', function () {
-        return view('profile.show', ['user' => auth()->user()]);
-    })->name('profile');
-    
-    // My Events
+    // My Events - require login
     Route::get('/my-events', function () {
         $events = auth()->user()->events()->latest()->paginate(10);
         return view('my-events.index', compact('events'));
     })->name('my-events');
     
-    // Settings
-    Route::get('/settings', function () {
-        return view('settings.index', ['user' => auth()->user()]);
-    })->name('settings');
-    
-    // Interests management
+    // Account Update -require login
+    Route::get('/account/edit', function () {return view('account.edit', ['user' => auth()->user()]);})->name('account.edit');
+    Route::put('/account/edit', [AccountController::class, 'update'])->name('account.edit');
+
+    // Interests management - require login
     Route::post('/interests/save', [InterestController::class, 'save'])->name('interests.save');
     Route::get('/interests', function () {
         $interests = auth()->user()->interests ?? collect();
         return view('interests.index', compact('interests'));
     })->name('interests.index');
-    
-    // Profile update routes
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    
-commended-events', [InterestController::class, 'getRecommendedEvents'])->name('interests.recommended');
+
+    // Recommended events
+    Route::get('/recommended-events', [InterestController::class, 'getRecommendedEvents'])->name('interests.recommended');
 });

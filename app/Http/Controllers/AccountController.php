@@ -59,5 +59,29 @@ class AccountController extends Controller
 
         return redirect('/account/login')->with('success', 'Logged out successfully!');
     }
+
+    public function update(Request $request)
+    {
+    $user = Auth::user();
+
+    $validated = $request->validate([
+        'firstname'      => 'required|string|max:255',
+        'lastname'       => 'required|string|max:255',
+        'email'          => "required|email|max:255|unique:accounts,email,{$user->id}",
+        'phone'          => 'nullable|string|max:20',
+        'date_of_birth'  => 'nullable|date',
+    ]);
+
+    // Update the user's info
+    $user->firstname = $validated['firstname'];
+    $user->lastname = $validated['lastname'];
+    $user->email = $validated['email'];
+    $user->phone = $validated['phone'] ?? null;
+    $user->date_of_birth = $validated['date_of_birth'] ?? null;
+    $user->save();
+
+    return redirect()->back()->with('success', 'Profile updated successfully!');
+    }
+
 }
 

@@ -29,7 +29,7 @@
                             <div class="card-body text-center">
                                 <h5 class="card-title">Profile</h5>
                                 <p class="card-text">Manage Settings</p>
-                                <a href="{{ route('profile') }}" class="btn btn-primary">Edit Profile</a>
+                                <a href="{{ route('account.edit') }}" class="btn btn-primary">Edit Profile</a>
                             </div>
                         </div>
                     </div>

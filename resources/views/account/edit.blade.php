@@ -24,7 +24,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('account.update') }}" method="POST" enctype="multipart/form-data" class="profile-update-form">
+            <form action="{{ route('account.edit') }}" method="POST" enctype="multipart/form-data" class="profile-update-form">
                 @csrf
                 @method('PUT')
 
@@ -78,18 +78,4 @@
         </div>
     </div>
 </div>
-
-<script>
-// Preview profile image
-document.getElementById('user-profile-image-input').addEventListener('change', function(e) {
-    const selectedFile = e.target.files[0];
-    if (selectedFile) {
-        const imageReader = new FileReader();
-        imageReader.onload = function(e) {
-            document.getElementById('user-avatar-display-image').src = e.target.result;
-        };
-        imageReader.readAsDataURL(selectedFile);
-    }
-});
-</script>
 </x-layout>

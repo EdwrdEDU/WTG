@@ -97,11 +97,6 @@
                 </a>
               </li>
               <li>
-                <a class="dropdown-item" href="/profile">
-                  <i class="bi bi-person me-2"></i>Profile
-                </a>
-              </li>
-              <li>
                 <a class="dropdown-item" href="/saved-events">
                   <i class="bi bi-bookmark me-2"></i>Saved Events
                 </a>
@@ -112,7 +107,7 @@
                 </a>
               </li>
               <li>
-                <a class="dropdown-item" href="/settings">
+                <a class="dropdown-item" href="/account/edit">
                   <i class="bi bi-gear me-2"></i>Settings
                 </a>
               </li>

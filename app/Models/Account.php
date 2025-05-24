@@ -14,11 +14,8 @@ class Account extends Authenticatable
         'firstname',
         'lastname',
         'email',
-        'password',
-        'profile_image',
-        'country',
-        'phone',          
-    'date_of_birth',
+        'phone',
+        'date_of_birth',
     ];
 
     protected $hidden = [
@@ -35,25 +32,16 @@ class Account extends Authenticatable
         return $this->belongsToMany(Interest::class, 'account_interests');
     }
 
-    /**
-     * Get all saved events for this account
-     */
     public function savedEvents()
     {
         return $this->hasMany(SavedEvent::class);
     }
 
-    /**
-     * Check if user has saved a specific local event
-     */
     public function hasSavedEvent($eventId)
     {
         return $this->savedEvents()->where('event_id', $eventId)->exists();
     }
 
-    /**
-     * Check if user has saved a specific external event
-     */
     public function hasSavedExternalEvent($externalEventId, $source = 'ticketmaster')
     {
         return $this->savedEvents()
@@ -62,9 +50,6 @@ class Account extends Authenticatable
             ->exists();
     }
 
-    /**
-     * Save a local event
-     */
     public function saveEvent($eventId)
     {
         $event = Event::find($eventId);
@@ -83,9 +68,6 @@ class Account extends Authenticatable
         ]);
     }
 
-    /**
-     * Save an external event (from API)
-     */
     public function saveExternalEvent($eventData, $source = 'ticketmaster')
     {
         return $this->savedEvents()->firstOrCreate([
@@ -107,17 +89,11 @@ class Account extends Authenticatable
         ]);
     }
 
-    /**
-     * Unsave an event
-     */
     public function unsaveEvent($eventId)
     {
         return $this->savedEvents()->where('event_id', $eventId)->delete();
     }
 
-    /**
-     * Unsave an external event
-     */
     public function unsaveExternalEvent($externalEventId, $source = 'ticketmaster')
     {
         return $this->savedEvents()
