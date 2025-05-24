@@ -172,7 +172,12 @@ class EventController extends Controller
                 $params['keyword'] = $query;
             }
             if ($location) {
-                $params['city'] = $location;
+                // Try to use postalCode if user enters a zip, otherwise fallback to keyword
+                if (is_numeric($location) && strlen($location) === 5) {
+                    $params['postalCode'] = $location;
+                } else {
+                    $params['keyword'] = isset($params['keyword']) ? $params['keyword'] . ' ' . $location : $location;
+                }
             }
             if ($category) {
                 $params['classificationName'] = $category;
