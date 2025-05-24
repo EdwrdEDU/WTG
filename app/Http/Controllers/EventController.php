@@ -53,8 +53,8 @@ class EventController extends Controller
 
     public function edit(Event $event)
     {
-        // Make sure user can only edit their own events
-        if ($event->account_id !== auth()->id()) {
+        // Ensure user is authenticated
+        if (!auth()->check()) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -63,8 +63,7 @@ class EventController extends Controller
 
     public function update(Request $request, Event $event)
     {
-        // Make sure user can only update their own events
-        if ($event->account_id !== auth()->id()) {
+        if (!auth()->check()) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -93,6 +92,9 @@ class EventController extends Controller
             
             $imagePath = $request->file('image')->store('events', 'public');
             $validated['image'] = $imagePath;
+        } else {
+            // Prevent overwriting the existing image with null
+            unset($validated['image']);
         }
 
         $event->update($validated);
@@ -102,8 +104,8 @@ class EventController extends Controller
 
     public function destroy(Event $event)
     {
-        // Make sure user can only delete their own events
-        if ($event->account_id !== auth()->id()) {
+        // Ensure user is authenticated
+        if (!auth()->check()) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -117,9 +119,8 @@ class EventController extends Controller
         return redirect('/my-events')->with('success', 'Event deleted successfully!');
     }
 
-   public function search(Request $request)
+    public function search(Request $request)
     {
-        // Get search parameters
         $query = $request->input('event');
         $location = $request->input('location');
         $category = $request->input('category');
@@ -127,48 +128,67 @@ class EventController extends Controller
         $endDate = $request->input('end_date');
         $priceMin = $request->input('price_min');
         $priceMax = $request->input('price_max');
-        
-        // Initialize collections
+
+        $externalEvents = $this->searchExternalEvents($query, $location, $category, $startDate, $endDate);
+        $localEvents = $this->searchLocalEvents($query, $location, $category, $startDate, $endDate, $priceMin, $priceMax);
+
+        $allEvents = $externalEvents->merge($localEvents);
+
+        $sortedEvents = $allEvents->sortBy(function($event) {
+            if (isset($event['dates']['start']['dateTime'])) {
+                return Carbon::parse($event['dates']['start']['dateTime'])->timestamp * -1;
+            }
+            return 0;
+        });
+
+        $searchInfo = [
+            'query' => $query,
+            'location' => $location,
+            'category' => $category,
+            'totalResults' => $sortedEvents->count(),
+            'externalResults' => $externalEvents->count(),
+            'localResults' => $localEvents->count(),
+        ];
+
+        return view('account-view.search-page', [
+            'searchResults' => $sortedEvents,
+            'searchInfo' => $searchInfo,
+            'query' => $query,
+            'location' => $location
+        ]);
+    }
+
+    private function searchExternalEvents($query, $location, $category, $startDate, $endDate)
+    {
         $externalEvents = collect();
-        $localEvents = collect();
-        
-        // 1. Search external events from Ticketmaster API
         try {
             $params = [
                 'apikey' => 'x3Vf8JCIUljRsLH2iqN6P7GgBYpJGP8R',
                 'countryCode' => 'US',
                 'size' => 20,
             ];
-            
-            // Add search parameters if provided
+
             if ($query) {
                 $params['keyword'] = $query;
             }
-            
             if ($location) {
                 $params['city'] = $location;
             }
-            
             if ($category) {
                 $params['classificationName'] = $category;
             }
-            
             if ($startDate) {
-                $params['startDateTime'] = Carbon::parse($startDate)->format('Y-m-d').'T00:00:00Z';
+                $params['startDateTime'] = Carbon::parse($startDate)->format('Y-m-d') . 'T00:00:00Z';
             }
-            
             if ($endDate) {
-                $params['endDateTime'] = Carbon::parse($endDate)->format('Y-m-d').'T23:59:59Z';
+                $params['endDateTime'] = Carbon::parse($endDate)->format('Y-m-d') . 'T23:59:59Z';
             }
-            
-            // Execute the API request
+
             $response = Http::get('https://app.ticketmaster.com/discovery/v2/events.json', $params);
-            
-            // Check if we got successful results
+
             $data = $response->json();
             if (isset($data['_embedded']['events'])) {
                 $externalEvents = collect($data['_embedded']['events'])->map(function($event) {
-                    // Add a type field to distinguish between external and local events
                     $event['event_type'] = 'external';
                     return $event;
                 });
@@ -176,49 +196,53 @@ class EventController extends Controller
         } catch (\Exception $e) {
             logger()->error('Ticketmaster API search error: ' . $e->getMessage());
         }
-        
-        // 2. Search local events from database
+        return $externalEvents;
+    }
+
+    private function searchLocalEvents($query, $location, $category, $startDate, $endDate, $priceMin, $priceMax)
+    {
+        $localEvents = collect();
         try {
             $eventsQuery = Event::query();
-            
-            // Apply search filters
+
             if ($query) {
                 $eventsQuery->where(function($q) use ($query) {
                     $q->where('title', 'like', "%{$query}%")
-                      ->orWhere('description', 'like', "%{$query}%")
-                      ->orWhere('organizer', 'like', "%{$query}%");
+                        ->orWhere('description', 'like', "%{$query}%")
+                        ->orWhere('organizer', 'like', "%{$query}%");
                 });
             }
-            
+
             if ($location) {
                 $eventsQuery->where(function($q) use ($location) {
                     $q->where('venue_name', 'like', "%{$location}%")
-                      ->orWhere('address', 'like', "%{$location}%");
+                        ->orWhere('address', 'like', "%{$location}%");
                 });
             }
-            
+
             if ($category) {
                 $eventsQuery->where('category_id', $category);
             }
-            
+
             if ($startDate) {
                 $eventsQuery->where('start_date', '>=', $startDate);
             }
-            
+
             if ($endDate) {
                 $eventsQuery->where('start_date', '<=', $endDate);
             }
-            
+
             if ($priceMin !== null) {
                 $eventsQuery->where('ticket_price', '>=', $priceMin);
             }
-            
+
             if ($priceMax !== null) {
                 $eventsQuery->where('ticket_price', '<=', $priceMax);
             }
-            
-            // Get results and transform them to match the format
+
             $localEvents = $eventsQuery->with('account')->get()->map(function($event) {
+                $imageUrl = $event->image ? asset("storage/{$event->image}") : asset('images/default-image.jpg');
+                $dateTime = "{$event->start_date} {$event->start_time}";
                 return [
                     'id' => $event->id,
                     'name' => $event->title,
@@ -226,13 +250,13 @@ class EventController extends Controller
                     'url' => route('events.show', $event),
                     'images' => [
                         [
-                            'url' => $event->image ? asset('storage/' . $event->image) : asset('images/default-image.jpg')
+                            'url' => $imageUrl
                         ]
                     ],
                     'dates' => [
                         'start' => [
                             'localDate' => $event->start_date,
-                            'dateTime' => $event->start_date . ' ' . $event->start_time,
+                            'dateTime' => $dateTime,
                         ]
                     ],
                     '_embedded' => [
@@ -261,34 +285,6 @@ class EventController extends Controller
         } catch (\Exception $e) {
             logger()->error('Local database search error: ' . $e->getMessage());
         }
-        
-        // 3. Merge results and sort by date
-        $allEvents = $externalEvents->merge($localEvents);
-        
-        // Sort by date (most recent first)
-        $sortedEvents = $allEvents->sortBy(function($event) {
-            if (isset($event['dates']['start']['dateTime'])) {
-                return Carbon::parse($event['dates']['start']['dateTime'])->timestamp * -1;
-            }
-            return 0;
-        });
-        
-        // Prepare search info for the view
-        $searchInfo = [
-            'query' => $query,
-            'location' => $location,
-            'category' => $category,
-            'totalResults' => $sortedEvents->count(),
-            'externalResults' => $externalEvents->count(),
-            'localResults' => $localEvents->count(),
-        ];
-        
-        // Return the view with search results
-        return view('account-view.search-page', [
-            'searchResults' => $sortedEvents,
-            'searchInfo' => $searchInfo,
-            'query' => $query,
-            'location' => $location
-        ]);
+        return $localEvents;
     }
 }
