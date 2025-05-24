@@ -7,7 +7,7 @@
       <li class="breadcrumb-item active" aria-current="page">Popular Events</li>
     </ol>
   </nav>
-
+<!-- End Breadcrumb -->
   <!-- Hero Section -->
   <div class="hero-section" style="background-image: url('{{ asset('images/fred-again-london-slack-vndedikiow.jpg') }}')">
     <div class="container">
