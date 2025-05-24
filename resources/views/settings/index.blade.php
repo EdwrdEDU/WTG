@@ -28,24 +28,6 @@
                 @csrf
                 @method('PUT')
 
-                <!-- Profile Picture Section -->
-                <div class="avatar-customization-section">
-                    <h3 class="avatar-section-heading">Profile Picture</h3>
-                    <div class="user-avatar-upload-area">
-                        <div class="current-avatar-preview-container">
-                            <img src="{{ auth()->user()->profile_image ? asset('storage/' . auth()->user()->profile_image) : asset('images/default-avatar.png') }}" 
-                                 alt="Profile Picture" id="user-avatar-display-image" class="current-user-avatar">
-                        </div>
-                        <div class="avatar-upload-controls">
-                            <input type="file" id="user-profile-image-input" name="profile_image" accept="image/*" class="hidden-file-upload-input">
-                            <label for="user-profile-image-input" class="change-avatar-button">
-                                <i class="fas fa-camera"></i>
-                                Change Photo
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Personal Information Section -->
                 <div class="personal-info-customization-section">
                     <h3 class="personal-details-heading">Personal Information</h3>
@@ -69,13 +51,6 @@
                             <input type="email" id="user-email-address-field" name="email" 
                                    value="{{ old('email', auth()->user()->email) }}" 
                                    class="email-address-input" required>
-                        </div>
-                        
-                        <div class="country-input-group">
-                            <label for="user-country-field" class="user-country-label">Country</label>
-                            <input type="text" id="user-country-field" name="country" 
-                                   value="{{ old('country', auth()->user()->country) }}" 
-                                   class="user-country-input" placeholder="e.g. United States">
                         </div>
                         
                         <div class="phone-input-group">

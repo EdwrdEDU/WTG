@@ -138,14 +138,17 @@ class SavedEventController extends Controller
     /**
      * Remove a saved event
      */
-    public function destroy(SavedEvent $savedEvent)
+    public function destroy(Request $request, $id)
     {
         try {
-            // Make sure user owns this saved event
-            if ($savedEvent->account_id !== Auth::id()) {
+            $savedEvent = SavedEvent::where('id', $id)
+                ->where('account_id', Auth::id())
+                ->first();
+
+            if (!$savedEvent) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Unauthorized action.'
+                    'message' => 'Unauthorized action or event not found.'
                 ], 403);
             }
 
