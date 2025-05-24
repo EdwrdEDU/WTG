@@ -14,7 +14,7 @@
       <div class="hero-content">
         <h1 class="hero-title">Find amazing events near you</h1>
         <p class="hero-subtitle">Whether you're a local, a tourist or just cruising through, we've got loads of great tips and events. You can explore by location, what's popular, or our top picks.</p>
-<a href="{{ url('/account/create') }}" class="location-btn">
+<a href="{{ url('/search/page') }}" class="location-btn">
   <i class="bi bi-geo-alt"></i>
   Find events nearby
 </a>
