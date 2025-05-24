@@ -246,9 +246,9 @@
                                         </div>
                                     @endif
                                     
-                                    <a href="{{ $event['url'] }}" target="{{ $event['event_type'] == 'external' ? '_blank' : '_self' }}" class="btn btn-primary btn-sm w-100">
+                                    <a href="{{ $event['url'] ?? '#' }}" target="{{ $event['event_type'] == 'external' ? '_blank' : '_self' }}" class="btn btn-primary btn-sm w-100">
                                         View Event 
-                                        @if($event['event_type'] == 'external')
+                                        @if($event['event_type'] == 'external') 
                                             <i class="bi bi-box-arrow-up-right ms-1"></i>
                                         @endif
                                     </a>
