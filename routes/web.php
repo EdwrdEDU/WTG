@@ -11,7 +11,11 @@ use Illuminate\Support\Facades\Route;
 // Public routes (accessible without login)
 Route::get('/', [HomeController::class, 'landing']);
 Route::get('/home', [HomeController::class, 'index'])->name('homepage');
-Route::view('/contacts', 'contacts.index');
+Route::view('
+// Contact form routes - PUBLIC (anyone can contact)
+Route::get('/contacts', [ContactController::class, 'show'])->name('contact.show');
+Route::post('/contacts', [ContactController::class, 'store'])->name('contact.store');
+
 Route::view('/help-center', 'helpcenter.index');
 
 // Authentication routes
@@ -37,7 +41,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/events/{event}', [EventController::class, 'update'])->name('events.update');
     Route::delete('/events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
 
-    // SAVED EVENTS ROUTES - Add these!
+    // SAVED EVENTS ROUTES
     Route::get('/saved-events', [SavedEventController::class, 'index'])->name('saved-events');
     Route::post('/saved-events/external', [SavedEventController::class, 'saveExternalEvent'])->name('saved-events.external');
     Route::delete('/saved-events/external', [SavedEventController::class, 'unsaveExternalEvent'])->name('saved-events.external.delete');
@@ -70,6 +74,40 @@ Route::middleware('auth')->group(function () {
     Route::get('/interests', function () {$interests = auth()->user()->interests ?? collect();return view('interests.index', compact('interests'));})->name('interests.index');
         
     // settings profile update
-    Route::post('/interests/toggle', [InterestController::class, 'toggle'])->name('interests.toggle');
-    Route::get('/interests/recommended-events', [InterestController::class, 'getRecommendedEvents'])->name('interests.recommended');
+    // User Dashboard
+    Route::get('/dashboard', function () {
+        $user = auth()->user();
+        $userEvents = $user->events()->latest()->take(5)->get();
+        $savedEventsCount = $user->savedEvents()->count(); 
+        return view('dashboard.index', compact('user', 'userEvents', 'savedEventsCount'));
+    })->name('dashboard');
+    
+    // Profile management
+    Route::get('/profile', function () {
+        return view('profile.show', ['user' => auth()->user()]);
+    })->name('profile');
+    
+    // My Events
+    Route::get('/my-events', function () {
+        $events = auth()->user()->events()->latest()->paginate(10);
+        return view('my-events.index', compact('events'));
+    })->name('my-events');
+    
+    // Settings
+    Route::get('/settings', function () {
+        return view('settings.index', ['user' => auth()->user()]);
+    })->name('settings');
+    
+    // Interests management
+    Route::post('/interests/save', [InterestController::class, 'save'])->name('interests.save');
+    Route::get('/interests', function () {
+        $interests = auth()->user()->interests ?? collect();
+        return view('interests.index', compact('interests'));
+    })->name('interests.index');
+    
+    // Profile update routes
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    
+commended-events', [InterestController::class, 'getRecommendedEvents'])->name('interests.recommended');
 });
