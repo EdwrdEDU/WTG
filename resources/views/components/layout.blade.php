@@ -193,8 +193,11 @@
       location.reload();
     }
 
+// Track buttons currently being processed to prevent duplicate requests
+const processingButtons = new Set();
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize save buttons
+    // Initialize save buttons with event delegation
     initializeSaveButtons();
     
     // Check saved status for all events on page load
@@ -204,38 +207,66 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function initializeSaveButtons() {
-    // Handle local event save buttons
-    document.querySelectorAll('.save-event-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const eventId = this.getAttribute('data-event-id');
-            const isSaved = this.classList.contains('saved');
-            
-            if (isSaved) {
-                unsaveLocalEvent(eventId, this);
-            } else {
-                saveLocalEvent(eventId, this);
-            }
-        });
-    });
+    // Use event delegation to avoid duplicate listeners
+    // Remove any existing listener first
+    document.body.removeEventListener('click', handleSaveButtonClick);
+    // Add the event listener
+    document.body.addEventListener('click', handleSaveButtonClick);
+}
 
+function handleSaveButtonClick(e) {
+    // Handle local event save buttons
+    if (e.target.closest('.save-event-btn')) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const button = e.target.closest('.save-event-btn');
+        const eventId = button.getAttribute('data-event-id');
+        const buttonId = eventId + '_local';
+        
+        // Prevent multiple clicks on the same button
+        if (processingButtons.has(buttonId) || button.disabled) {
+            return;
+        }
+        
+        const isSaved = button.classList.contains('saved');
+        
+        if (isSaved) {
+            unsaveLocalEvent(eventId, button);
+        } else {
+            saveLocalEvent(eventId, button);
+        }
+    }
+    
     // Handle external event save buttons
-    document.querySelectorAll('.save-external-event-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            
-            const isSaved = this.classList.contains('saved');
-            
-            if (isSaved) {
-                unsaveExternalEvent(this);
-            } else {
-                saveExternalEvent(this);
-            }
-        });
-    });
+    if (e.target.closest('.save-external-event-btn')) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const button = e.target.closest('.save-external-event-btn');
+        const eventId = button.getAttribute('data-event-id');
+        const buttonId = eventId + '_external';
+        
+        // Prevent multiple clicks on the same button
+        if (processingButtons.has(buttonId) || button.disabled) {
+            return;
+        }
+        
+        const isSaved = button.classList.contains('saved');
+        
+        if (isSaved) {
+            unsaveExternalEvent(button);
+        } else {
+            saveExternalEvent(button);
+        }
+    }
+}
+
+// Function for dynamically added content (called from homepage.blade.php)
+function initializeSaveButtonsForContainer(container) {
+    // This function doesn't need to do anything since we're using event delegation
+    // The event delegation in initializeSaveButtons() will handle all buttons automatically
+    console.log('Save buttons initialized for new content via event delegation');
 }
 
 function saveLocalEvent(eventId, button) {
@@ -244,6 +275,14 @@ function saveLocalEvent(eventId, button) {
         return;
     }
 
+    const buttonId = eventId + '_local';
+    
+    // Prevent duplicate requests
+    if (processingButtons.has(buttonId)) {
+        return;
+    }
+    
+    processingButtons.add(buttonId);
     button.disabled = true;
     const originalHtml = button.innerHTML;
     button.innerHTML = '<i class="bi bi-heart-fill"></i> Saving...';
@@ -275,10 +314,19 @@ function saveLocalEvent(eventId, button) {
     })
     .finally(() => {
         button.disabled = false;
+        processingButtons.delete(buttonId);
     });
 }
 
 function unsaveLocalEvent(eventId, button) {
+    const buttonId = eventId + '_local';
+    
+    // Prevent duplicate requests
+    if (processingButtons.has(buttonId)) {
+        return;
+    }
+    
+    processingButtons.add(buttonId);
     button.disabled = true;
     const originalHtml = button.innerHTML;
     button.innerHTML = '<i class="bi bi-heart"></i> Removing...';
@@ -310,6 +358,7 @@ function unsaveLocalEvent(eventId, button) {
     })
     .finally(() => {
         button.disabled = false;
+        processingButtons.delete(buttonId);
     });
 }
 
@@ -319,11 +368,21 @@ function saveExternalEvent(button) {
         return;
     }
 
+    const eventId = button.getAttribute('data-event-id');
+    const buttonId = eventId + '_external';
+    
+    // Prevent duplicate requests
+    if (processingButtons.has(buttonId)) {
+        return;
+    }
+    
+    processingButtons.add(buttonId);
     button.disabled = true;
+    const originalHtml = button.innerHTML;
     button.innerHTML = '<i class="bi bi-heart-fill"></i>';
     
     const eventData = {
-        event_id: button.getAttribute('data-event-id'),
+        event_id: eventId,
         event_name: button.getAttribute('data-event-name'),
         event_url: button.getAttribute('data-event-url'),
         event_image: button.getAttribute('data-event-image'),
@@ -349,26 +408,37 @@ function saveExternalEvent(button) {
             button.title = 'Remove from saved';
             showToast(data.message, 'success');
         } else {
-            button.innerHTML = '<i class="bi bi-heart"></i>';
+            button.innerHTML = originalHtml;
             showToast(data.message, 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        button.innerHTML = '<i class="bi bi-heart"></i>';
+        button.innerHTML = originalHtml;
         showToast('Failed to save event. Please try again.', 'error');
     })
     .finally(() => {
         button.disabled = false;
+        processingButtons.delete(buttonId);
     });
 }
 
 function unsaveExternalEvent(button) {
+    const eventId = button.getAttribute('data-event-id');
+    const buttonId = eventId + '_external';
+    
+    // Prevent duplicate requests
+    if (processingButtons.has(buttonId)) {
+        return;
+    }
+    
+    processingButtons.add(buttonId);
     button.disabled = true;
+    const originalHtml = button.innerHTML;
     button.innerHTML = '<i class="bi bi-heart"></i>';
     
     const eventData = {
-        event_id: button.getAttribute('data-event-id')
+        event_id: eventId
     };
     
     fetch('/saved-events/external', {
@@ -387,17 +457,18 @@ function unsaveExternalEvent(button) {
             button.title = 'Save Event';
             showToast(data.message, 'success');
         } else {
-            button.innerHTML = '<i class="bi bi-heart-fill"></i>';
+            button.innerHTML = originalHtml;
             showToast(data.message, 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        button.innerHTML = '<i class="bi bi-heart-fill"></i>';
+        button.innerHTML = originalHtml;
         showToast('Failed to remove event. Please try again.', 'error');
     })
     .finally(() => {
         button.disabled = false;
+        processingButtons.delete(buttonId);
     });
 }
 
