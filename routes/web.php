@@ -24,7 +24,7 @@ Route::post('/account/login', [AccountController::class, 'login'])->name('accoun
 Route::post('/account/store', [AccountController::class, 'store'])->name('account.store');
 
 // Public search - anyone can search
-Route::get('/search/page', fn () => view('search-page.search-page'));
+Route::get('/search/page', fn () => view('account-view.search-page'));
 Route::get('/search', [EventController::class, 'search'])->name('events.search');
 
 // PROTECTED ROUTES - require login
