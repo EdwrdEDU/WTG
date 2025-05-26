@@ -33,7 +33,7 @@ border-radius: 20px;
 flex: 1;
  }
 
-/* Fix footer width - ensure it spans full width */
+
 footer {
   width: 100vw !important;
   margin-left: calc(-50vw + 50%) !important;
