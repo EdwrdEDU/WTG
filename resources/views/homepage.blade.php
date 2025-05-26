@@ -42,7 +42,7 @@
                     <!-- Add save button for logged-in users -->
                     @auth
                         <button class="btn btn-outline-danger save-external-event-btn position-absolute" 
-                                style="top: 10px; left: 10px; background: rgba(255,255,255,0.9);"
+                                style="top: 10px; left: 10px; "
                                 data-event-id="{{ $event['id'] }}" 
                                 data-event-name="{{ $event['name'] }}"
                                 data-event-url="{{ $event['url'] ?? '' }}"
@@ -1050,7 +1050,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (isLoggedIn) {
       saveButtonHTML = `
         <button class="btn btn-outline-danger save-external-event-btn position-absolute" 
-                style="top: 10px; right: 10px; background: rgba(255,255,255,0.9);"
+                style="top: 10px; right: 10px; "
                 data-event-id="${event.id}" 
                 data-event-name="${eventName.replace(/"/g, '&quot;')}"
                 data-event-url="${eventUrl}"
@@ -1066,7 +1066,7 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
       saveButtonHTML = `
         <a href="/account/login" class="btn btn-outline-danger position-absolute" 
-           style="top: 10px; right: 10px; background: rgba(255,255,255,0.9);"
+           style="top: 10px; right: 10px;"
            title="Login to save">
           <i class="bi bi-heart"></i>
         </a>
