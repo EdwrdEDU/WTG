@@ -23,7 +23,8 @@
   <link href="{{ asset('css/settings.css') }}" rel="stylesheet">
   <link href="{{ asset('css/profile.css') }}" rel="stylesheet">
   <link href="{{ asset('css/edit.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/show.css') }}" rel="stylesheet">
+   <link href="{{ asset('css/show.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/contact-organizer-modal.css') }}" rel="stylesheet">
 </head>
 <body>
   

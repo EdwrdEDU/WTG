@@ -54,47 +54,84 @@
             </div>
         </div>
         
-        <!-- Ticket Sidebar -->
-        <div class="event-ticket-sidebar">
-            <div class="ticket-purchase-card">
-                <div class="ticket-card-content">
-                    <h2 class="ticket-type-name">{{ $event->ticket_name }}</h2>
-                    <div class="ticket-price-display">₱{{ number_format($event->ticket_price, 2) }}</div>
-                    <p class="ticket-availability-info">{{ $event->ticket_quantity }} tickets available</p>
-                    
-                    @if($event->account_id === auth()->id())
-                        <!-- Event Owner Controls -->
-                        <div class="event-owner-actions">
-                            <a href="{{ route('events.edit', $event) }}" 
-                               class="btn-event-edit">Edit Event</a>
-                            <button class="btn-event-delete" 
-                                    onclick="showDeleteConfirmation({{ $event->id }})">
-                                Delete Event
-                            </button>
-                        </div>
-                    @else
-                        <!-- Customer Actions -->
-                        <div class="customer-action-buttons">
-                            <button class="btn-purchase-tickets">Get Tickets</button>
-                            
-                            @auth
-                                <button class="btn-save-event" 
-                                        data-event-id="{{ $event->id }}" 
-                                        data-event-type="local"
-                                        title="Save this event to your favorites">
-                                    <i class="bi bi-heart save-heart-icon"></i> Save Event
-                                </button>
-                            @else
-                                <a href="{{ route('login') }}" class="btn-login-to-save">
-                                    <i class="bi bi-heart save-heart-icon"></i> Login to Save
-                                </a>
-                            @endauth
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
+       
+       <div class="event-ticket-sidebar">
+ <div class="ticket-purchase-card">
+<div class="ticket-card-content">
+<h2 class="ticket-type-name">{{ $event->ticket_name }}</h2>
+<div class="ticket-price-display">₱{{ number_format($event->ticket_price, 2) }}</div>
+<p class="ticket-availability-info">{{ $event->ticket_quantity }} tickets available</p>
+@if($event->account_id === auth()->id())
+<!-- Event Owner Controls -->
+<div class="event-owner-actions">
+<a href="{{ route('events.edit', $event) }}"
+class="btn-event-edit">Edit Event</a>
+<button class="btn-event-delete"
+onclick="showDeleteConfirmation({{ $event->id }})">
+ Delete Event
+</button>
+</div>
+@else
+<!-- Customer Actions -->
+<div class="customer-action-buttons">
+<button class="btn-contact-organizer" onclick="showContactModal('{{ $event->account->email }}', '{{ $event->account->firstname }} {{ $event->account->lastname }}', '{{ $event->title }}')">
+Contact Organizer
+</button>
+@auth
+<button class="btn-save-event"
+data-event-id="{{ $event->id }}"
+data-event-type="local"
+title="Save this event to your favorites">
+<i class="bi bi-heart save-heart-icon"></i> Save Event
+</button>
+@else
+<a href="{{ route('login') }}" class="btn-login-to-save">
+<i class="bi bi-heart save-heart-icon"></i> Login to Save
+</a>
+@endauth
+</div>
+@endif
+</div>
+</div>
+</div>
+
+<!-- Contact Organizer Modal -->
+<div id="contactModal" class="modal" style="display: none;">
+<div class="modal-content">
+<div class="modal-header">
+<h3>Contact Event Organizer</h3>
+<span class="close" onclick="closeContactModal()">&times;</span>
+</div>
+<div class="modal-body">
+<form id="contactForm">
+<div class="form-group">
+<label for="organizer-email">To:</label>
+<input type="email" id="organizer-email" readonly style="background-color: #f5f5f5;">
+</div>
+<div class="form-group">
+<label for="organizer-name">Organizer:</label>
+<input type="text" id="organizer-name" readonly style="background-color: #f5f5f5;">
+</div>
+<div class="form-group">
+<label for="message-subject">Subject:</label>
+<input type="text" id="message-subject" placeholder="Inquiry about your event">
+</div>
+<div class="form-group">
+<label for="message-body">Message:</label>
+<textarea id="message-body" rows="5" placeholder="Hi! I'm interested in your event..."></textarea>
+</div>
+<div class="modal-actions">
+<button type="button" onclick="sendMessage()" class="btn-send-message">Send Message</button>
+<button type="button" onclick="closeContactModal()" class="btn-cancel">Cancel</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+
+
+
+
 </div>
 
 <!-- Delete Confirmation Modal -->
@@ -127,6 +164,42 @@
 </div>
 
 <script>
+    function showContactModal(email, name, eventTitle) {
+document.getElementById('organizer-email').value = email;
+document.getElementById('organizer-name').value = name;
+document.getElementById('message-subject').value = 'Inquiry about: ' + eventTitle;
+document.getElementById('contactModal').style.display = 'block';
+}
+
+function closeContactModal() {
+document.getElementById('contactModal').style.display = 'none';
+document.getElementById('contactForm').reset();
+}
+
+function sendMessage() {
+const email = document.getElementById('organizer-email').value;
+const subject = document.getElementById('message-subject').value;
+const body = document.getElementById('message-body').value;
+    
+if (!subject.trim() || !body.trim()) {
+alert('Please fill in both subject and message fields.');
+return;
+}
+
+// Create mailto link
+const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+window.location.href = mailtoLink;
+    
+closeContactModal();
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+const modal = document.getElementById('contactModal');
+if (event.target == modal) {
+closeContactModal();
+}
+}
 function showDeleteConfirmation(eventId) {
     const deleteForm = document.getElementById('eventDeleteForm');
     const modal = document.getElementById('eventDeleteModal');
