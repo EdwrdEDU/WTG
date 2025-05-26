@@ -1,6 +1,6 @@
-/* Create Event Page Styles */
 
-/* Variables - matching your root colors */
+
+
 :root {
     --wtg-primary-color: #f05537;
     --wtg-secondary-color: black;
@@ -13,7 +13,7 @@
     --wtg-success: #28a745;
   }
   
-  /* Page Header */
+ 
   .events-page-header {
    
     color: var(--wtg-secondary-color);
@@ -27,7 +27,7 @@
     margin-bottom: 0.5rem;
   }
   
-  /* Event Form Card */
+ 
   .event-form-card {
     border: none;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -35,7 +35,7 @@
     margin-bottom: 2rem;
   }
   
-  /* Form Navigation */
+ 
   .event-form-nav {
     display: flex;
     margin-bottom: 2rem;
@@ -88,7 +88,7 @@
     color: var(--wtg-primary-color);
   }
   
-  /* Form Sections */
+ 
   .event-form-section {
     padding: 0.5rem;
   }
@@ -99,7 +99,7 @@
     font-weight: 600;
   }
   
-  /* Form Elements */
+ 
   .form-label {
     font-weight: 500;
     color: var(--wtg-text-dark);
@@ -114,7 +114,7 @@
     box-shadow: 0 0 0 0.25rem rgba(240, 85, 55, 0.25);
   }
   
-  /* Buttons */
+ 
   .btn-primary {
     background-color: var(--wtg-primary-color);
     border-color: var(--wtg-primary-color);
@@ -130,7 +130,7 @@
     border-color: var(--wtg-success);
   }
   
-  /* Image Upload */
+ 
   .image-upload-container {
     border: 2px dashed var(--wtg-gray);
     border-radius: 8px;
@@ -145,7 +145,7 @@
     border-color: var(--wtg-primary-color);
   }
   
-  /* Ticket Items */
+ 
   .ticket-item {
     background-color: var(--wtg-gray-light);
     border-radius: 8px;
@@ -153,7 +153,7 @@
     transition: all 0.3s ease;
   }
   
-  /* Publish CTA */
+ 
   .publish-cta {
     background-color: var(--wtg-gray-light);
     color: var(--wtg-text-dark);
@@ -165,7 +165,7 @@
     font-weight: 600;
   }
   
-  /* Event Tips */
+ 
   .event-tip-list {
     padding-left: 1.5rem;
   }
@@ -174,7 +174,7 @@
     margin-bottom: 0.8rem;
   }
   
-  /* Responsive adjustments */
+ 
   @media (max-width: 768px) {
     .event-form-nav .nav-text {
       display: none;

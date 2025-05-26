@@ -314,15 +314,15 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // WTG Quick date buttons functionality
+            
             document.querySelectorAll('.wtg-quick-date-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    // Remove selected from all buttons
+                    
                     document.querySelectorAll('.wtg-quick-date-btn').forEach(b => b.classList.remove('wtg-selected'));
-                    // Add selected to clicked button
+                    
                     this.classList.add('wtg-selected');
                     
-                    // Set date inputs based on selection
+                    
                     const today = new Date();
                     const startInput = document.getElementById('wtg-start-date');
                     const endInput = document.getElementById('wtg-end-date');
@@ -357,7 +357,7 @@
                 });
             });
             
-            // WTG Free events checkbox functionality
+            
             document.getElementById('wtg-free-events')?.addEventListener('change', function() {
                 const minPrice = document.querySelector('.wtg-price-min');
                 const maxPrice = document.querySelector('.wtg-price-max');
@@ -373,13 +373,13 @@
                 }
             });
             
-            // WTG Sort functionality
+            
             document.getElementById('wtg-sort-select')?.addEventListener('change', function() {
                 const sortValue = this.value;
                 const resultsContainer = document.getElementById('wtg-search-results');
                 const eventCards = Array.from(resultsContainer.querySelectorAll('.wtg-event-col'));
                 
-                // Sort the cards based on selection
+                
                 eventCards.sort((a, b) => {
                     if (sortValue.includes('Date (soonest first)')) {
                         const dateA = getWtgEventDate(a);
@@ -401,36 +401,36 @@
                     return 0;
                 });
                 
-                // Remove all cards
+                
                 eventCards.forEach(card => card.remove());
                 
-                // Add sorted cards back
+                
                 eventCards.forEach(card => {
                     resultsContainer.appendChild(card);
                 });
             });
             
-            // WTG Helper function to get event date
+            
             function getWtgEventDate(cardElement) {
                 const dateText = cardElement.querySelector('.wtg-event-date').textContent.trim();
                 if (dateText === 'Date TBA') {
-                    return Number.MAX_SAFE_INTEGER; // Put TBA dates at the end
+                    return Number.MAX_SAFE_INTEGER; 
                 }
                 return new Date(dateText.replace('• ', '')).getTime();
             }
             
-            // WTG Helper function to get event price
+            
             function getWtgEventPrice(cardElement) {
                 const priceText = cardElement.querySelector('.wtg-event-price').textContent.trim();
                 if (priceText === 'Price TBA') {
-                    return Number.MAX_SAFE_INTEGER; // Put TBA prices at the end
+                    return Number.MAX_SAFE_INTEGER; 
                 }
-                // Extract the first number from the price text
+                
                 const priceMatch = priceText.match(/\$(\d+\.?\d*)/);
                 return priceMatch ? parseFloat(priceMatch[1]) : Number.MAX_SAFE_INTEGER;
             }
             
-            // Initialize save buttons if the function exists
+            
             if (typeof initializeSaveButtons === 'function') {
                 initializeSaveButtons();
             }

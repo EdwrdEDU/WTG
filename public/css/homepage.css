@@ -1,6 +1,6 @@
-/* homepage-styles.css */
 
-/* Page-specific styles for the homepage */
+
+
 .hero-section {
     background-size: cover;
     background-position: center;
@@ -11,7 +11,20 @@
     overflow: hidden;
     margin: 20px 0;
   }
-  
+  .page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+@media (max-width: 768px) {
+    .page-container {
+        padding: 0 10px;
+    }
+}
+  .content-section {
+    margin: 40px 0;
+}
   .hero-section::before {
     content: '';
     position: absolute;
@@ -179,7 +192,7 @@
       --text-secondary: #6f7287;
     }
     
-    /* Category Tabs */
+   
     .category-tabs {
       margin-bottom: 20px;
     }
@@ -265,7 +278,7 @@
 }
 
 
-    /* Events Section */
+   
     .events-section .card {
       border-radius: 8px;
       overflow: hidden;
@@ -300,7 +313,7 @@
       margin-bottom: 4px;
     }
     
-    /* Badge Styles */
+   
     .events-section .badge {
       font-weight: 500;
       font-size: 12px;
@@ -327,11 +340,10 @@
     }
 
     .interest-container {
-        background-color: #f8f9fa;
-        border-radius: 8px;
-        padding: 20px;
-        max-width: 800px;
-        margin: 20px auto;
+         background-color: #f8f9fa;
+          border-radius: 8px;
+          padding: 30px;
+          margin: 40px 0;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
     
@@ -416,7 +428,7 @@
 }
 
 .custom-event-btn {
-  background-color: #d1410c; /* your primary color */
+  background-color: #d1410c;
   color: #fff;
   border: none;
   padding: 10px 13px;

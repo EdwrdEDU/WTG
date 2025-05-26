@@ -1,6 +1,6 @@
 <!-- homepage.blade.php -->
 <x-layout>
-  <!-- Breadcrumb -->
+<div class="page-container">
   <nav aria-label="breadcrumb" class="mt-3">
     <ol class="breadcrumb">
       <li class="breadcrumb-item"><a href="#">Home</a></li>
@@ -42,7 +42,7 @@
                     <!-- Add save button for logged-in users -->
                     @auth
                         <button class="btn btn-outline-danger save-external-event-btn position-absolute" 
-                                style="top: 10px; right: 50px; background: rgba(255,255,255,0.9);"
+                                style="top: 10px; left: 10px; background: rgba(255,255,255,0.9);"
                                 data-event-id="{{ $event['id'] }}" 
                                 data-event-name="{{ $event['name'] }}"
                                 data-event-url="{{ $event['url'] ?? '' }}"
@@ -378,7 +378,7 @@
         <a href="/account/create" class="btn btn-lg" style="background-color: var(--primary-color); color: white;">Sign Up to Create Events</a>
     @endauth
   </div>
-
+</div>
 <!-- JavaScript -->
 <script>
 // Category cards functionality with improvements
