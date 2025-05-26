@@ -1,25 +1,25 @@
 <x-layout>
 <!-- Page Header -->
-<div class="events-page-header">
-    <div class="container">
+<div class="wtg-event-header-section">
+    <div class="wtg-main-container">
         <h1>Edit Your Event</h1>
         <p>Update your event details</p>
     </div>
 </div>
 
 <!-- Edit Event Form -->
-<div class="container my-5">
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="card event-form-card">
-                <div class="card-body">
+<div class="wtg-main-container wtg-content-spacing">
+    <div class="wtg-layout-row">
+        <div class="wtg-primary-column">
+            <div class="wtg-form-card wtg-event-edit-card">
+                <div class="wtg-card-content">
                     <form action="{{ route('events.update', $event) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         
                         @if ($errors->any())
-                            <div class="alert alert-danger">
-                                <ul class="mb-0">
+                            <div class="wtg-error-alert">
+                                <ul class="wtg-error-list">
                                     @foreach ($errors->all() as $error)
                                         <li>{{ $error }}</li>
                                     @endforeach
@@ -28,27 +28,27 @@
                         @endif
                         
                         <!-- Basic Information -->
-                        <div class="event-form-section">
-                            <h3 class="section-title">Basic Information</h3>
+                        <div class="wtg-form-section">
+                            <h3 class="wtg-section-heading">Basic Information</h3>
                             
-                            <div class="mb-3">
-                                <label for="event-title" class="form-label">Event Title <span class="required">*</span></label>
-                                <input type="text" class="form-control" id="event-title" name="title" value="{{ old('title', $event->title) }}" required>
+                            <div class="wtg-input-group">
+                                <label for="event-title" class="wtg-field-label">Event Title <span class="wtg-required-mark">*</span></label>
+                                <input type="text" class="wtg-text-input" id="event-title" name="title" value="{{ old('title', $event->title) }}" required>
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="event-organizer" class="form-label">Organizer</label>
-                                <input type="text" class="form-control" id="event-organizer" name="organizer" value="{{ old('organizer', $event->organizer) }}">
+                            <div class="wtg-input-group">
+                                <label for="event-organizer" class="wtg-field-label">Organizer</label>
+                                <input type="text" class="wtg-text-input" id="event-organizer" name="organizer" value="{{ old('organizer', $event->organizer) }}">
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="event-description" class="form-label">Description <span class="required">*</span></label>
-                                <textarea class="form-control" id="event-description" name="description" rows="4" required>{{ old('description', $event->description) }}</textarea>
+                            <div class="wtg-input-group">
+                                <label for="event-description" class="wtg-field-label">Description <span class="wtg-required-mark">*</span></label>
+                                <textarea class="wtg-textarea-input" id="event-description" name="description" rows="4" required>{{ old('description', $event->description) }}</textarea>
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="event-category" class="form-label">Category <span class="required">*</span></label>
-                                <select class="form-select" id="event-category" name="category_id" required>
+                            <div class="wtg-input-group">
+                                <label for="event-category" class="wtg-field-label">Category <span class="wtg-required-mark">*</span></label>
+                                <select class="wtg-select-input" id="event-category" name="category_id" required>
                                     <option value="">Select a category</option>
                                     <option value="1" {{ old('category_id', $event->category_id) == 1 ? 'selected' : '' }}>Music</option>
                                     <option value="2" {{ old('category_id', $event->category_id) == 2 ? 'selected' : '' }}>Food & Drink</option>
@@ -67,76 +67,76 @@
                                 </select>
                             </div>
                             
-                            <div class="mb-3">
-                                <label class="form-label">Event Type <span class="required">*</span></label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="event_type" id="type-in-person" value="in-person" {{ old('event_type', $event->event_type) == 'in-person' ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="type-in-person">In Person</label>
+                            <div class="wtg-input-group">
+                                <label class="wtg-field-label">Event Type <span class="wtg-required-mark">*</span></label>
+                                <div class="wtg-radio-option">
+                                    <input class="wtg-radio-input" type="radio" name="event_type" id="type-in-person" value="in-person" {{ old('event_type', $event->event_type) == 'in-person' ? 'checked' : '' }}>
+                                    <label class="wtg-radio-label" for="type-in-person">In Person</label>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="event_type" id="type-online" value="online" {{ old('event_type', $event->event_type) == 'online' ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="type-online">Online</label>
+                                <div class="wtg-radio-option">
+                                    <input class="wtg-radio-input" type="radio" name="event_type" id="type-online" value="online" {{ old('event_type', $event->event_type) == 'online' ? 'checked' : '' }}>
+                                    <label class="wtg-radio-label" for="type-online">Online</label>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="event_type" id="type-hybrid" value="hybrid" {{ old('event_type', $event->event_type) == 'hybrid' ? 'checked' : '' }}>
-                                    <label class="form-check-label" for="type-hybrid">Hybrid</label>
+                                <div class="wtg-radio-option">
+                                    <input class="wtg-radio-input" type="radio" name="event_type" id="type-hybrid" value="hybrid" {{ old('event_type', $event->event_type) == 'hybrid' ? 'checked' : '' }}>
+                                    <label class="wtg-radio-label" for="type-hybrid">Hybrid</label>
                                 </div>
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="event-image" class="form-label">Event Image</label>
+                            <div class="wtg-input-group">
+                                <label for="event-image" class="wtg-field-label">Event Image</label>
                                 @if($event->image)
-                                    <div class="mb-2">
-                                        <img src="{{ asset('storage/' . $event->image) }}" alt="Current image" class="img-thumbnail" style="max-width: 200px;">
-                                        <p class="small text-muted">Current image (upload new to replace)</p>
+                                    <div class="wtg-current-image-preview">
+                                        <img src="{{ asset('storage/' . $event->image) }}" alt="Current image" class="wtg-preview-image">
+                                        <p class="wtg-image-caption">Current image (upload new to replace)</p>
                                     </div>
                                 @endif
-                                <input type="file" class="form-control" id="event-image" name="image" accept="image/*">
+                                <input type="file" class="wtg-file-input" id="event-image" name="image" accept="image/*">
                             </div>
                             
                             <!-- Event Details -->
-                            <h3 class="section-title mt-4">Event Details</h3>
+                            <h3 class="wtg-section-heading wtg-section-spacing">Event Details</h3>
                             
-                            <div class="mb-3">
-                                <label class="form-label">Date and Time <span class="required">*</span></label>
-                                <div class="row g-2">
-                                    <div class="col-md-6">
-                                        <label for="start-date" class="form-label small">Start Date</label>
-                                        <input type="date" class="form-control" id="start-date" name="start_date" value="{{ old('start_date', $event->start_date) }}" required>
+                            <div class="wtg-input-group">
+                                <label class="wtg-field-label">Date and Time <span class="wtg-required-mark">*</span></label>
+                                <div class="wtg-date-time-row">
+                                    <div class="wtg-date-column">
+                                        <label for="start-date" class="wtg-field-sublabel">Start Date</label>
+                                        <input type="date" class="wtg-text-input" id="start-date" name="start_date" value="{{ old('start_date', $event->start_date) }}" required>
                                     </div>
-                                    <div class="col-md-6">
-                                        <label for="start-time" class="form-label small">Start Time</label>
-                                        <input type="time" class="form-control" id="start-time" name="start_time" value="{{ old('start_time', $event->start_time) }}" required>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label">Location</label>
-                                <input type="text" class="form-control mb-2" id="venue-name" name="venue_name" placeholder="Venue Name" value="{{ old('venue_name', $event->venue_name) }}">
-                                <input type="text" class="form-control" id="address" name="address" placeholder="Address" value="{{ old('address', $event->address) }}">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label class="form-label">Ticket Information</label>
-                                <div class="ticket-item p-3 border rounded mb-2">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" name="ticket_name" placeholder="Ticket Name" value="{{ old('ticket_name', $event->ticket_name) }}">
-                                        </div>
-                                        <div class="col-md-3">
-                                            <input type="number" class="form-control" name="ticket_quantity" placeholder="Quantity" min="1" value="{{ old('ticket_quantity', $event->ticket_quantity) }}">
-                                        </div>
-                                        <div class="col-md-3">
-                                            <input type="number" class="form-control" name="ticket_price" placeholder="Price (₱)" min="0" step="0.01" value="{{ old('ticket_price', $event->ticket_price) }}">
-                                        </div>
+                                    <div class="wtg-time-column">
+                                        <label for="start-time" class="wtg-field-sublabel">Start Time</label>
+                                        <input type="time" class="wtg-text-input" id="start-time" name="start_time" value="{{ old('start_time', $event->start_time) }}" required>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="d-flex justify-content-between">
-                                <a href="/my-events" class="btn btn-secondary">Cancel</a>
-                                <button type="submit" class="btn btn-primary">Update Event</button>
+                            <div class="wtg-input-group">
+                                <label class="wtg-field-label">Location</label>
+                                <input type="text" class="wtg-text-input wtg-location-input" id="venue-name" name="venue_name" placeholder="Venue Name" value="{{ old('venue_name', $event->venue_name) }}">
+                                <input type="text" class="wtg-text-input" id="address" name="address" placeholder="Address" value="{{ old('address', $event->address) }}">
+                            </div>
+                            
+                            <div class="wtg-input-group">
+                                <label class="wtg-field-label">Ticket Information</label>
+                                <div class="wtg-ticket-container">
+                                    <div class="wtg-ticket-row">
+                                        <div class="wtg-ticket-name-col">
+                                            <input type="text" class="wtg-text-input" name="ticket_name" placeholder="Ticket Name" value="{{ old('ticket_name', $event->ticket_name) }}">
+                                        </div>
+                                        <div class="wtg-ticket-qty-col">
+                                            <input type="number" class="wtg-text-input" name="ticket_quantity" placeholder="Quantity" min="1" value="{{ old('ticket_quantity', $event->ticket_quantity) }}">
+                                        </div>
+                                        <div class="wtg-ticket-price-col">
+                                            <input type="number" class="wtg-text-input" name="ticket_price" placeholder="Price (₱)" min="0" step="0.01" value="{{ old('ticket_price', $event->ticket_price) }}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="wtg-button-actions">
+                                <a href="/my-events" class="wtg-cancel-btn">Cancel</a>
+                                <button type="submit" class="wtg-submit-btn">Update Event</button>
                             </div>
                         </div>
                     </form>
@@ -145,13 +145,13 @@
         </div>
         
         <!-- Sidebar -->
-        <div class="col-lg-4">
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5 class="mb-0">Event Update Tips</h5>
+        <div class="wtg-sidebar-column">
+            <div class="wtg-tips-card">
+                <div class="wtg-card-header">
+                    <h5 class="wtg-card-title">Event Update Tips</h5>
                 </div>
-                <div class="card-body">
-                    <ul class="event-tip-list">
+                <div class="wtg-card-content">
+                    <ul class="wtg-tips-list">
                         <li><strong>Keep it updated</strong> - Make sure all information is current</li>
                         <li><strong>Notify attendees</strong> - Let people know about important changes</li>
                         <li><strong>High-quality images</strong> - Update images if you have better ones</li>

@@ -22,6 +22,7 @@
   <link href="{{ asset('css/search-page.css') }}" rel="stylesheet">
   <link href="{{ asset('css/settings.css') }}" rel="stylesheet">
   <link href="{{ asset('css/profile.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/edit.css') }}" rel="stylesheet">
 </head>
 <body>
   
@@ -134,7 +135,7 @@
   </div>
 
 
-  <footer class="bg-dark text-white py-5">
+  <footer class="bg-dark text-white py-4">
   <div class="container">
     <div class="row">
       <div class="col-md-3">
