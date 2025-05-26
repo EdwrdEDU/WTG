@@ -135,7 +135,7 @@
   </div>
 
 
-  <footer class="bg-dark text-white py-4">
+  <footer class="bg-dark text-white py-3">
   <div class="container">
     <div class="row">
       <div class="col-md-3">

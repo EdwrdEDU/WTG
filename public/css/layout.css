@@ -35,18 +35,9 @@ flex: 1;
 
 
 footer {
-    width: 100% !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    flex-shrink: 0;
-    position: relative;
-  
-    padding: 0.5rem 0;
-    min-height: auto;
-    box-sizing: border-box;
-}
-
-footer.bg-dark {
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
+  width: 100vw !important;
+  margin-left: calc(-50vw + 50%) !important;
+  margin-right: calc(-50vw + 50%) !important;
+  flex-shrink: 0;
+  position: relative;
 }
