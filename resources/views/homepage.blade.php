@@ -7,23 +7,23 @@
       <li class="breadcrumb-item active" aria-current="page">Popular Events</li>
     </ol>
   </nav>
-<!-- End Breadcrumb -->
+
   <!-- Hero Section -->
   <div class="hero-section" style="background-image: url('{{ asset('images/fred-again-london-slack-vndedikiow.jpg') }}')">
     <div class="container">
       <div class="hero-content">
         <h1 class="hero-title">Find amazing events near you</h1>
         <p class="hero-subtitle">Whether you're a local, a tourist or just cruising through, we've got loads of great tips and events. You can explore by location, what's popular, or our top picks.</p>
-<a href="{{ url('/search/page') }}" class="location-btn">
+  <a href="{{ url('/search/page') }}" class="location-btn">
   <i class="bi bi-geo-alt"></i>
   Find events nearby
-</a>
+  </a>
 
       </div>
     </div>
   </div>
 
-<div class="mt-5">
+  <div class="mt-5">
     <div class="section-title">
         Featured Events
         <a href="#events" class="explore-link">
@@ -81,10 +81,10 @@
     @empty
         <p>No featured events available at this time.</p>
     @endforelse
-</div>
+  </div>
 
-<!-- Popular Categories -->
-<div class="mt-5 mb-5">
+
+  <div class="mt-5 mb-5">
   <div class="section-title">
     Browse by Category
   </div>
@@ -115,19 +115,19 @@
       </div>
     </div>
   </div>
-</div>
+  </div>
 
-<!-- Event Results Section -->
-<div id="event-results" class="mt-3">
+
+  <div id="event-results" class="mt-3">
   <!-- Dynamic event cards will be displayed here -->
-</div>
+  </div>
 
-<div id="loading-spinner" style="display: none;" class="text-center py-4">
+  <div id="loading-spinner" style="display: none;" class="text-center py-4">
   <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
     <span class="visually-hidden">Loading events...</span>
   </div>
   <p class="mt-2 text-muted">Loading events...</p>
-</div>
+  </div>
 
  <!-- Events Section -->
   <div id="events" class="events-section mt-5 mb-5">
@@ -165,15 +165,15 @@
     </div>
     
   <!-- Events Near You Section -->
-<div class="section-title">
+  <div class="section-title">
     Events Near You
     <a href="#" class="explore-link">
         Explore more events
         <i class="bi bi-arrow-right"></i>
     </a>
-</div>
+  </div>
 
-<div class="row">
+  <div class="row">
     @foreach ($eventsNearYou as $event)
         <div class="col-md-3 mb-4">
             <div class="card event-card">

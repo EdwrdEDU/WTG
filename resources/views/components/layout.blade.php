@@ -24,7 +24,7 @@
   <link href="{{ asset('css/profile.css') }}" rel="stylesheet">
 </head>
 <body>
-  <!-- Navbar -->
+  
   <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <a class="navbar-brand" href="/home">WTG?</a>
@@ -133,51 +133,51 @@
     {{ $slot }}
   </div>
 
-  <!-- Footer -->
+
   <footer class="bg-dark text-white py-5">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-3">
-          <h5>WTG?</h5>
-          <p>Where To Go? Find the best events near you.</p>
-        </div>
-        <div class="col-md-3">
-          <h5>Find Events</h5>
-          <ul class="list-unstyled">
-            <li><a href="/events/location" class="text-white-50">Browse by location</a></li>
-            <li><a href="/events/category" class="text-white-50">Browse by category</a></li>
-            <li><a href="/events/featured" class="text-white-50">Featured events</a></li>
-          </ul>
-        </div>
-        <div class="col-md-3">
-          <h5>Organize</h5>
-          <ul class="list-unstyled">
-            <li><a href="/create-events" class="text-white-50">Create an event</a></li>
-            <li><a href="/pricing" class="text-white-50">Pricing</a></li>
-            <li><a href="/resources" class="text-white-50">Resources</a></li>
-          </ul>
-        </div>
-        <div class="col-md-3">
-          <h5>Help</h5>
-          <ul class="list-unstyled">
-            <li><a href="/help-center" class="text-white-50">Help Center</a></li>
-            <li><a href="/contact-us" class="text-white-50">Contact Us</a></li>
-            <li><a href="/privacy-policy" class="text-white-50">Privacy Policy</a></li>
-          </ul>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-3">
+        <h5>WTG?</h5>
+        <p>Where To Go? Find the best events near you.</p>
       </div>
-      <hr class="my-4">
-      <div class="d-flex justify-content-between align-items-center">
-        <span>© 2025 WTG? All rights reserved.</span>
-        <div>
-          <a href="#" class="text-white me-3"><i class="bi bi-facebook"></i></a>
-          <a href="#" class="text-white me-3"><i class="bi bi-twitter"></i></a>
-          <a href="#" class="text-white me-3"><i class="bi bi-instagram"></i></a>
-          <a href="#" class="text-white"><i class="bi bi-linkedin"></i></a>
-        </div>
+      <div class="col-md-3">
+        <h5>Find Events</h5>
+        <ul class="list-unstyled">
+          <li><a href="/events/location" class="text-white-50">Browse by location</a></li>
+          <li><a href="/events/category" class="text-white-50">Browse by category</a></li>
+          <li><a href="/events/featured" class="text-white-50">Featured events</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5>Organize</h5>
+        <ul class="list-unstyled">
+          <li><a href="/create-events" class="text-white-50">Create an event</a></li>
+          <li><a href="/pricing" class="text-white-50">Pricing</a></li>
+          <li><a href="/resources" class="text-white-50">Resources</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5>Help</h5>
+        <ul class="list-unstyled">
+          <li><a href="/help-center" class="text-white-50">Help Center</a></li>
+          <li><a href="/contact-us" class="text-white-50">Contact Us</a></li>
+          <li><a href="/privacy-policy" class="text-white-50">Privacy Policy</a></li>
+        </ul>
       </div>
     </div>
-  </footer>
+    <hr class="my-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <span>© 2025 WTG? All rights reserved.</span>
+      <div>
+        <a href="#" class="text-white me-3"><i class="bi bi-facebook"></i></a>
+        <a href="#" class="text-white me-3"><i class="bi bi-twitter"></i></a>
+        <a href="#" class="text-white me-3"><i class="bi bi-instagram"></i></a>
+        <a href="#" class="text-white"><i class="bi bi-linkedin"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
