@@ -75,5 +75,6 @@ Route::middleware('auth')->group(function () {
     })->name('interests.index');
 
     // Recommended events
-    Route::get('/recommended-events', [InterestController::class, 'getRecommendedEvents'])->name('interests.recommended');
+    Route::post('/interests/toggle', [InterestController::class, 'toggle'])->name('interests.toggle');
+    Route::get('/interests/recommended-events', [InterestController::class, 'getRecommendedEvents'])->name('interests.recommended');
 });

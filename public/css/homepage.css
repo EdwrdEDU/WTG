@@ -390,15 +390,16 @@
 }
 
 .interest-pill {
-    display: inline-block;
-    padding: 8px 16px;
-    border: 1px solid #dee2e6;
-    border-radius: 20px;
-    margin: 2px;
+    transition: all 0.3s ease;
     cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none; 
-    color: inherit; 
+    margin: 5px;
+    padding: 8px 16px;
+    border: 2px solid var(--interest-color, #6366f1);
+    background-color: transparent;
+    color: var(--interest-color, #6366f1);
+    border-radius: 25px;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .interest-pill:hover {
@@ -408,10 +409,10 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-  .interest-pill.selected {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
+ .interest-pill.selected {
+    background-color: var(--interest-color, #6366f1) !important;
+    color: white !important;
+    border-color: var(--interest-color, #6366f1) !important;
 }
 
 .interest-pill.selected:hover {
@@ -460,3 +461,51 @@
 
 
 
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.modal.show {
+    display: block !important;
+}
+
+.modal-dialog-scrollable .modal-content {
+    max-height: calc(100vh - 3.5rem);
+}
+
+.modal-dialog-scrollable .modal-body {
+    overflow-y: auto;
+}
+
+/* Ensure modal appears above everything */
+.modal {
+    z-index: 1055 !important;
+}
+
+.modal-backdrop {
+    z-index: 1050 !important;
+}
+
+/* Card hover effects in modal */
+#recommendations-content .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+#recommendations-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+#recommendations-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+#recommendations-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+#recommendations-content::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}

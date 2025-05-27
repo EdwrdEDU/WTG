@@ -65,32 +65,33 @@ class InterestController extends Controller
         ]);
     }
 
-    public function getRecommendedEvents()
-    {
-        $user = Auth::user();
-        $userInterests = $user->interests;
-        
-        if ($userInterests->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Please select some interests first!',
-                'events' => []
-            ]);
-        }
+  public function getRecommendedEvents()
+{
+    $user = Auth::user();
+    $userInterests = $user->interests;
+    
+    if ($userInterests->isEmpty()) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Please select some interests first!',
+            'events' => []
+        ]);
+    }
 
-        $allEvents = collect();
-        
-        foreach ($userInterests as $interest) {
-            if ($interest->ticketmaster_classification) {
-                try {
-                    $response = Http::get('https://app.ticketmaster.com/discovery/v2/events.json', [
-                        'apikey' => 'x3Vf8JCIUljRsLH2iqN6P7GgBYpJGP8R',
-                        'classificationName' => $interest->ticketmaster_classification,
-                        'countryCode' => 'US',
-                        'size' => 10,
-                        'sort' => 'date,asc'
-                    ]);
+    $allEvents = collect();
+    
+    foreach ($userInterests as $interest) {
+        if ($interest->ticketmaster_classification) {
+            try {
+                $response = Http::timeout(10)->get('https://app.ticketmaster.com/discovery/v2/events.json', [
+                    'apikey' => 'x3Vf8JCIUljRsLH2iqN6P7GgBYpJGP8R',
+                    'classificationName' => $interest->ticketmaster_classification,
+                    'countryCode' => 'US',
+                    'size' => 10,
+                    'sort' => 'date,asc'
+                ]);
 
+                if ($response->successful()) {
                     $data = $response->json();
                     if (isset($data['_embedded']['events'])) {
                         $events = collect($data['_embedded']['events'])->map(function ($event) use ($interest) {
@@ -100,19 +101,20 @@ class InterestController extends Controller
                         });
                         $allEvents = $allEvents->merge($events);
                     }
-                } catch (\Exception $e) {
-                    logger()->error('Ticketmaster API error for interest ' . $interest->name . ': ' . $e->getMessage());
                 }
+            } catch (\Exception $e) {
+                logger()->error('Ticketmaster API error for interest ' . $interest->name . ': ' . $e->getMessage());
             }
         }
+    }
 
-        // Remove duplicates and limit results
-        $uniqueEvents = $allEvents->unique('id')->take(20);
+    // Remove duplicates and limit results
+    $uniqueEvents = $allEvents->unique('id')->take(20);
 
-        return response()->json([
-            'success' => true,
-            'events' => $uniqueEvents,
-            'total' => $uniqueEvents->count()
+    return response()->json([
+        'success' => true,
+        'events' => $uniqueEvents,
+        'total' => $uniqueEvents->count()
         ]);
     }
 }

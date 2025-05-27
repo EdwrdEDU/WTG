@@ -350,19 +350,25 @@
 </div>
 
 <!-- Recommendations Modal -->
-<div class="modal fade" id="recommendationsModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="recommendationsModal" tabindex="-1" aria-labelledby="recommendationsModalLabel" aria-hidden="true" data-bs-backdrop="true" data-bs-keyboard="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable" style="max-width: 90vw;">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Recommended Events for You</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="recommendationsModalLabel">
+                    <i class="bi bi-stars me-2"></i>Recommended Events for You
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="recommendations-content">
+            <div class="modal-body" id="recommendations-content" style="max-height: 70vh; overflow-y: auto;">
                 <div class="text-center">
                     <div class="spinner-border" role="status">
                         <span class="visually-hidden">Loading...</span>
                     </div>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a href="/search/page" class="btn btn-primary">Search More Events</a>
             </div>
         </div>
     </div>
@@ -379,6 +385,14 @@
     @endauth
   </div>
 </div>
+
+
+
+
+
+
+
+
 <!-- JavaScript -->
 <script>
 // Category cards functionality with improvements
@@ -702,7 +716,9 @@ function saveInterests() {
         })
     })
     .then(response => {
-        console.log('Response status:', response.status);
+      if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+      }
         return response.json();
     })
     .then(data => {
@@ -741,55 +757,132 @@ function saveInterests() {
     });
 }
 
+// Replace the getRecommendations function in homepage.blade.php with this fixed version
 function getRecommendations() {
     if (selectedInterests.length === 0) return;
     
-    const modal = new bootstrap.Modal(document.getElementById('recommendationsModal'));
-    modal.show();
+    // Ensure any existing modal is properly closed first
+    const existingModal = bootstrap.Modal.getInstance(document.getElementById('recommendationsModal'));
+    if (existingModal) {
+        existingModal.dispose();
+    }
     
-    // Reset content
+    // Create new modal instance
+    const modal = new bootstrap.Modal(document.getElementById('recommendationsModal'), {
+        backdrop: true,
+        keyboard: true,
+        focus: true
+    });
+    
+    // Reset content before showing
     document.getElementById('recommendations-content').innerHTML = `
-        <div class="text-center">
-            <div class="spinner-border" role="status">
+        <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
                 <span class="visually-hidden">Loading recommendations...</span>
             </div>
-            <p class="mt-2">Finding events based on your interests...</p>
+            <p class="mt-3 text-muted">Finding events based on your interests...</p>
+            <small class="text-muted">This may take a few seconds</small>
         </div>
     `;
     
+    // Show modal
+    modal.show();
+    
+    // Ensure body doesn't scroll when modal is open
+    document.body.style.overflow = 'hidden';
+    
+    // Add event listener to restore body scroll when modal closes
+    document.getElementById('recommendationsModal').addEventListener('hidden.bs.modal', function () {
+        document.body.style.overflow = 'auto';
+    });
+    
     fetch('/interests/recommended-events')
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
         const content = document.getElementById('recommendations-content');
         
         if (data.success && data.events.length > 0) {
-            let eventsHTML = '<div class="row">';
+            // Remove duplicates based on event name and venue
+            const uniqueEvents = data.events.filter((event, index, self) => 
+                index === self.findIndex(e => 
+                    e.name === event.name && 
+                    (e._embedded?.venues?.[0]?.name === event._embedded?.venues?.[0]?.name)
+                )
+            ).slice(0, 12); // Limit to 12 events for better performance
             
-            data.events.forEach(event => {
-                const imageUrl = event.images && event.images.length > 0 ? event.images[0].url : '/api/placeholder/300/200';
+            let eventsHTML = `
+                <div class="mb-3">
+                    <h6 class="text-muted">Found ${uniqueEvents.length} recommended events based on your interests</h6>
+                </div>
+                <div class="row g-3">
+            `;
+            
+            uniqueEvents.forEach(event => {
+                const imageUrl = event.images && event.images.length > 0 ? event.images[0].url : '/images/default-image.jpg';
                 const eventDate = event.dates && event.dates.start && event.dates.start.dateTime 
-                    ? new Date(event.dates.start.dateTime).toLocaleDateString() 
+                    ? new Date(event.dates.start.dateTime).toLocaleDateString('en-US', { 
+                        weekday: 'short', 
+                        month: 'short', 
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit'
+                    }) 
                     : 'Date TBA';
                 const venueName = event._embedded && event._embedded.venues && event._embedded.venues[0] 
                     ? event._embedded.venues[0].name 
                     : 'Venue TBA';
                 
+                const priceInfo = event.priceRanges && event.priceRanges.length > 0
+                    ? `$${event.priceRanges[0].min}${event.priceRanges[0].min !== event.priceRanges[0].max ? ' - $' + event.priceRanges[0].max : ''}`
+                    : 'Price TBA';
+                
                 eventsHTML += `
-                    <div class="col-md-6 mb-3">
-                        <div class="card h-100">
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border-0 shadow-sm" style="transition: all 0.3s ease;">
                             <div class="position-relative">
-                                <img src="${imageUrl}" class="card-img-top" alt="${event.name}" style="height: 150px; object-fit: cover;">
-                                <span class="badge position-absolute top-0 end-0 m-2" style="background-color: ${event.interest_color}">
+                                <img src="${imageUrl}" 
+                                     class="card-img-top" 
+                                     alt="${event.name}" 
+                                     style="height: 160px; object-fit: cover;"
+                                     onerror="this.src='/images/default-image.jpg'">
+                                <span class="badge position-absolute top-0 end-0 m-2" 
+                                      style="background-color: ${event.interest_color || '#6366f1'}; font-size: 0.75em;">
                                     ${event.interest_category}
                                 </span>
                             </div>
-                            <div class="card-body">
-                                <h6 class="card-title">${event.name.substring(0, 50)}${event.name.length > 50 ? '...' : ''}</h6>
-                                <p class="card-text small text-muted">
-                                    <i class="bi bi-calendar"></i> ${eventDate}<br>
-                                    <i class="bi bi-geo-alt"></i> ${venueName}
-                                </p>
-                                <a href="${event.url}" class="btn btn-sm btn-primary" target="_blank">View Event</a>
+                            <div class="card-body p-3 d-flex flex-column">
+                                <h6 class="card-title fw-bold mb-2" style="line-height: 1.3; font-size: 0.95rem;">
+                                    ${event.name.length > 50 ? event.name.substring(0, 50) + '...' : event.name}
+                                </h6>
+                                
+                                <div class="text-muted small mb-3 flex-grow-1">
+                                    <div class="mb-1">
+                                        <i class="bi bi-calendar me-1 text-primary"></i> 
+                                        <span>${eventDate}</span>
+                                    </div>
+                                    <div class="mb-1">
+                                        <i class="bi bi-geo-alt me-1 text-primary"></i> 
+                                        <span>${venueName.length > 30 ? venueName.substring(0, 30) + '...' : venueName}</span>
+                                    </div>
+                                    <div class="mb-0">
+                                        <i class="bi bi-tag me-1 text-primary"></i> 
+                                        <span class="fw-semibold">${priceInfo}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-auto d-grid">
+                                    <a href="${event.url}" 
+                                       class="btn btn-primary btn-sm" 
+                                       target="_blank"
+                                       rel="noopener noreferrer">
+                                        View Event <i class="bi bi-box-arrow-up-right ms-1"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -798,23 +891,33 @@ function getRecommendations() {
             
             eventsHTML += '</div>';
             content.innerHTML = eventsHTML;
+            
         } else {
             content.innerHTML = `
-                <div class="text-center">
-                    <i class="bi bi-calendar-x" style="font-size: 3rem; color: #ccc;"></i>
-                    <h5>No recommendations found</h5>
-                    <p>Try selecting different interests or check back later for new events!</p>
+                <div class="text-center py-5">
+                    <i class="bi bi-calendar-x text-muted" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3 text-muted">No recommendations found</h5>
+                    <p class="text-muted mb-4">Try selecting different interests or check back later for new events!</p>
+                    <button class="btn btn-outline-primary" data-bs-dismiss="modal">
+                        Close and Select Different Interests
+                    </button>
                 </div>
             `;
         }
     })
     .catch(error => {
-        console.error('Error:', error);
+        console.error('Error fetching recommendations:', error);
         document.getElementById('recommendations-content').innerHTML = `
-            <div class="text-center">
-                <i class="bi bi-exclamation-triangle" style="font-size: 3rem; color: #dc3545;"></i>
-                <h5>Error loading recommendations</h5>
-                <p>Please try again later.</p>
+            <div class="text-center py-5">
+                <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+                <h5 class="mt-3 text-danger">Error Loading Recommendations</h5>
+                <p class="text-muted mb-4">There was a problem fetching your recommendations. Please try again.</p>
+                <div class="d-grid gap-2 d-md-block">
+                    <button class="btn btn-outline-primary" onclick="getRecommendations()">
+                        <i class="bi bi-arrow-clockwise me-1"></i> Try Again
+                    </button>
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         `;
     });
