@@ -73,23 +73,36 @@ onclick="showDeleteConfirmation({{ $event->id }})">
 </div>
 @else
 <!-- Customer Actions -->
+@php
+    $eventDateTime = \Carbon\Carbon::parse($event->start_date . ' ' . $event->start_time);
+    $isPastEvent = $eventDateTime->isPast();
+@endphp
 <div class="customer-action-buttons">
-<button class="btn-contact-organizer" onclick="showContactModal('{{ $event->account->email }}', '{{ $event->account->firstname }} {{ $event->account->lastname }}', '{{ $event->title }}')">
-Contact Organizer
-</button>
-@auth
-<button class="btn-save-event"
-data-event-id="{{ $event->id }}"
-data-event-type="local"
-title="Save this event to your favorites">
-<i class="bi bi-heart save-heart-icon"></i> Save Event
-</button>
-@else
-<a href="{{ route('login') }}" class="btn-login-to-save">
-<i class="bi bi-heart save-heart-icon"></i> Login to Save
-</a>
-@endauth
+    <button class="btn-contact-organizer" 
+        onclick="showContactModal('{{ $event->account->email }}', '{{ $event->account->firstname }} {{ $event->account->lastname }}', '{{ $event->title }}')"
+        @if($isPastEvent) disabled style="opacity:0.6;cursor:not-allowed;" title="Event has ended" @endif>
+        Contact Organizer
+    </button>
+    @auth
+        <button class="btn-save-event"
+            data-event-id="{{ $event->id }}"
+            data-event-type="local"
+            title="Save this event to your favorites"
+            @if($isPastEvent) disabled style="opacity:0.6;cursor:not-allowed;" title="Event has ended" @endif>
+            <i class="bi bi-heart save-heart-icon"></i> Save Event
+        </button>
+    @else
+        <a href="{{ route('login') }}" class="btn-login-to-save"
+            @if($isPastEvent) style="pointer-events:none;opacity:0.6;cursor:not-allowed;" title="Event has ended" @endif>
+            <i class="bi bi-heart save-heart-icon"></i> Login to Save
+        </a>
+    @endauth
 </div>
+@if($isPastEvent)
+    <div class="event-unavailable-message" style="color:#b94a48; margin-top:10px;">
+        This event is no longer available.
+    </div>
+@endif
 @endif
 </div>
 </div>
