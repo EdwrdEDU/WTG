@@ -11,12 +11,21 @@ class Account extends Authenticatable
 
     protected $primaryKey = 'id';
     protected $fillable = [
-        'firstname',
-        'lastname',
-        'email',
-        'phone',
-        'date_of_birth',
-    ];
+    'firstname',
+    'lastname',
+    'email',
+    'phone',
+    'date_of_birth',
+    'notification_preferences',
+    'notification_delivery',
+    'notifications_enabled'
+];
+
+protected $casts = [
+    'notification_preferences' => 'array',
+    'notification_delivery' => 'array',
+    'notifications_enabled' => 'boolean'
+];
 
     protected $hidden = [
         'password',
@@ -101,4 +110,52 @@ class Account extends Authenticatable
             ->where('external_source', $source)
             ->delete();
     }
+
+public function notifications()
+{
+    return $this->hasMany(\App\Models\Notification::class);
+}
+
+public function unreadNotifications()
+{
+    return $this->notifications()->unread();
+}
+
+public function getUnreadNotificationsCountAttribute()
+{
+    return $this->unreadNotifications()->count();
+}
+
+// Helper method to check if user wants specific notification type
+public function wantsNotification($type)
+{
+    // Default to true if notifications_enabled field doesn't exist yet
+    if (!isset($this->attributes['notifications_enabled'])) {
+        return true;
+    }
+    
+    if (!$this->notifications_enabled) {
+        return false;
+    }
+    
+    $preferences = $this->notification_preferences ?? [];
+    
+    // Default preferences if none set
+    if (empty($preferences)) {
+        return true; // Enable all notifications by default
+    }
+    
+    $typeMapping = [
+        'event_in_week' => 'week_before',
+        'event_tomorrow' => 'day_before',
+        'event_today' => 'day_of',
+        'event_reminder' => 'two_hours_before',
+        'event_update' => 'event_changes',
+        'event_cancellations' => 'event_cancellations'
+    ];
+    
+    $preferenceKey = $typeMapping[$type] ?? $type;
+    
+    return in_array($preferenceKey, $preferences);
+}
 }

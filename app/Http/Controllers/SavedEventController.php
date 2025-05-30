@@ -4,15 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\SavedEvent;
 use App\Models\Event;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class SavedEventController extends Controller
 {
-    public function __construct()
+    protected $notificationService;
+
+    public function __construct(NotificationService $notificationService)
     {
         $this->middleware('auth');
+        $this->notificationService = $notificationService;
     }
 
     /**
@@ -27,15 +31,14 @@ class SavedEventController extends Controller
         return view('saved-events.index', compact('savedEvents'));
     }
 
-    /**
-     * Save a local event
+   /**
+     * Save a local event - UPDATED VERSION
      */
     public function saveLocalEvent(Request $request, Event $event)
     {
         try {
             $user = Auth::user();
             
-            // Check if already saved
             if ($user->hasSavedEvent($event->id)) {
                 return response()->json([
                     'success' => false,
@@ -43,7 +46,10 @@ class SavedEventController extends Controller
                 ]);
             }
 
-            $user->saveEvent($event->id);
+            $savedEvent = $user->saveEvent($event->id);
+            
+            // The observer will automatically handle notification scheduling
+            // No need to call it manually here anymore
 
             return response()->json([
                 'success' => true,
@@ -58,15 +64,12 @@ class SavedEventController extends Controller
         }
     }
 
-    /**
-     * Save an external event (from Ticketmaster API)
+   /**
+     * Save an external event - UPDATED VERSION
      */
     public function saveExternalEvent(Request $request)
     {
         try {
-            // Add debug logging
-            Log::info('saveExternalEvent called', ['request_data' => $request->all()]);
-            
             $validated = $request->validate([
                 'event_id' => 'required|string',
                 'event_name' => 'required|string',
@@ -80,7 +83,6 @@ class SavedEventController extends Controller
 
             $user = Auth::user();
             
-            // Check if already saved
             if ($user->hasSavedExternalEvent($validated['event_id'])) {
                 return response()->json([
                     'success' => false,
@@ -88,7 +90,6 @@ class SavedEventController extends Controller
                 ]);
             }
 
-            // Create the event data structure
             $eventData = [
                 'id' => $validated['event_id'],
                 'name' => $validated['event_name'],
@@ -103,37 +104,27 @@ class SavedEventController extends Controller
                 ]
             ];
 
+
             if ($validated['price_info']) {
                 $eventData['priceRanges'] = [['min' => $validated['price_info'], 'max' => $validated['price_info'], 'currency' => '']];
             }
 
-            $user->saveExternalEvent($eventData);
-
-            Log::info('External event saved successfully', ['event_id' => $validated['event_id']]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Event saved successfully!'
-            ]);
+            $savedEvent = $user->saveExternalEvent($eventData);
             
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            Log::error('Validation error saving external event: ' . json_encode($e->errors()));
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid event data provided.',
-                'errors' => $e->errors()
-            ], 422);
-        } catch (\Exception $e) {
-            Log::error('Error saving external event: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString(),
-                'request_data' => $request->all()
-            ]);
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to save event. Please try again.'
-            ], 500);
-        }
+            
+        return response()->json([
+            'success' => true,
+            'message' => 'Event saved successfully!'
+        ]);
+        
+    } catch (\Exception $e) {
+        Log::error('Error saving external event: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to save event. Please try again.'
+        ], 500);
     }
+}
 
     /**
      * Remove a saved event
@@ -258,4 +249,10 @@ class SavedEventController extends Controller
             ], 500);
         }
     }
+
+
+
+
+
+
 }
