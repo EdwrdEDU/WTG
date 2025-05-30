@@ -632,7 +632,7 @@
         processingButtons.add(buttonId);
         button.disabled = true;
         const originalHtml = button.innerHTML;
-        button.innerHTML = '<i class="bi bi-heart-fill"></i> Saving...';
+        button.innerHTML = '<i class="bi bi-heart-fill"></i>';
         
         fetch(`/events/${eventId}/save`, {
             method: 'POST',
@@ -646,7 +646,7 @@
             if (data.success) {
                 button.classList.add('saved', 'btn-danger');
                 button.classList.remove('btn-outline-danger');
-                button.innerHTML = '<i class="bi bi-heart-fill"></i> Saved';
+                button.innerHTML = '<i class="bi bi-heart-fill"></i>';
                 button.title = 'Remove from saved';
                 showToast(data.message, 'success');
                 updateNotificationBadge(); // Update notification badge
@@ -676,7 +676,7 @@
         processingButtons.add(buttonId);
         button.disabled = true;
         const originalHtml = button.innerHTML;
-        button.innerHTML = '<i class="bi bi-heart"></i> Removing...';
+        button.innerHTML = '<i class="bi bi-heart"></i>';
         
         fetch(`/events/${eventId}/unsave`, {
             method: 'DELETE',
@@ -690,7 +690,7 @@
             if (data.success) {
                 button.classList.remove('saved', 'btn-danger');
                 button.classList.add('btn-outline-danger');
-                button.innerHTML = '<i class="bi bi-heart"></i> Save Event';
+                button.innerHTML = '<i class="bi bi-heart"></i>';
                 button.title = 'Save Event';
                 showToast(data.message, 'success');
             } else {
