@@ -31,38 +31,64 @@ class SavedEventController extends Controller
         return view('saved-events.index', compact('savedEvents'));
     }
 
-   /**
-     * Save a local event - UPDATED VERSION
-     */
-    public function saveLocalEvent(Request $request, Event $event)
-    {
-        try {
-            $user = Auth::user();
-            
-            if ($user->hasSavedEvent($event->id)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Event already saved!'
-                ]);
-            }
-
-            $savedEvent = $user->saveEvent($event->id);
-            
-            // The observer will automatically handle notification scheduling
-            // No need to call it manually here anymore
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Event saved successfully!'
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error saving local event: ' . $e->getMessage());
+/**
+ * Save a local event - UPDATED VERSION WITH BETTER ERROR HANDLING
+ */
+public function saveLocalEvent(Request $request, Event $event)
+{
+    try {
+        $user = Auth::user();
+        
+        // Check if user is trying to save their own event
+        if ($event->account_id === $user->id) {
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to save event. Please try again.'
-            ], 500);
+                'message' => 'You cannot save your own event!'
+            ]);
         }
+        
+        // Check if already saved
+        if ($user->hasSavedEvent($event->id)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Event already saved!'
+            ]);
+        }
+
+        // Create saved event record
+        $savedEvent = $user->saveEvent($event->id);
+        
+        if (!$savedEvent) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to save event. Event may not exist.'
+            ]);
+        }
+
+        // Log the successful save for debugging
+        Log::info('Event saved successfully', [
+            'user_id' => $user->id,
+            'event_id' => $event->id,
+            'saved_event_id' => $savedEvent->id
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Event saved successfully!'
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Error saving local event: ' . $e->getMessage(), [
+            'user_id' => Auth::id(),
+            'event_id' => $event->id,
+            'error_trace' => $e->getTraceAsString()
+        ]);
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Failed to save event. Please try again.'
+        ], 500);
     }
+}
 
    /**
      * Save an external event - UPDATED VERSION
