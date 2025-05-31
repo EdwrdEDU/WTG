@@ -29,185 +29,176 @@
 <body>
   
   <nav class="navbar navbar-expand-lg">
-  <div class="container-fluid">
-    <!-- Brand - Always visible -->
-    <a class="navbar-brand" href="/home">WTG?</a>
-    
-    <!-- Search Form - Hidden on mobile -->
-    <form class="d-flex navbar-search-form" role="search" action="{{ route('events.search') }}" method="GET">
-      <input class="form-control" type="search" name="event" placeholder="Search Events" aria-label="Search"/>
-      <div class="vr mx-3" style="background-color: white;"></div>
-      <div class="d-flex align-items-center">
-        <span class="me-2">
-          <i class="bi bi-geo-alt text-white"></i>
-        </span>
-        <input class="form-control" type="search" name="location" placeholder="Location" aria-label="Search"/>
-      </div>
-      <button type="submit" class="btn">
-        <i class="bi bi-search text-white"></i>
-      </button>
-    </form>
-    
-    <!-- Toggler Button -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    
-    <!-- Collapsible Content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <!-- Mobile Search Form - Only visible on mobile -->
-      <div class="mobile-search-container d-lg-none">
-        <form class="mobile-search-form" action="{{ route('events.search') }}" method="GET">
-          <input class="form-control" type="search" name="event" placeholder="Search Events" aria-label="Search"/>
-          <div class="search-row">
-            <div class="location-input-group">
-              <i class="bi bi-geo-alt"></i>
-              <input class="form-control" type="search" name="location" placeholder="Location" aria-label="Location"/>
-            </div>
-            <button type="submit" class="btn">
-              <i class="bi bi-search"></i>
-            </button>
-          </div>
-        </form>
-      </div>
+    <div class="container-fluid">
+      <!-- Brand - Always visible -->
+      <a class="navbar-brand" href="/home">WTG?</a>
       
-      <!-- Navigation Links -->
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0" style="gap: 15px; display: flex;">
-        <!-- Always visible -->
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="/contacts">Contact Us</a>
-        </li>
-        
-        <!-- Only show when logged in -->
-        @auth
-        <li class="nav-item">
-          <a class="nav-link" href="/events/create">Create Events</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/dashboard">Dashboard</a>
-        </li>
-        @endauth
-        
-        <!-- Always visible -->
-        <li class="nav-item">
-          <a class="nav-link" href="/help-center">Help Center</a>
-        </li>
-        
-        <!-- Only show when NOT logged in -->
-        @guest
-        <li class="nav-item">
-          <a class="nav-link" href="/account/login">Log In</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/account/create">Sign Up</a>
-        </li>
-        @endguest
+      <!-- Search Form - Hidden on mobile -->
+      <form class="d-flex navbar-search-form" role="search" action="{{ route('events.search') }}" method="GET">
+        <input class="form-control" type="search" name="event" placeholder="Search Events" aria-label="Search"/>
+        <div class="vr mx-3" style="background-color: white;"></div>
+        <div class="d-flex align-items-center">
+          <span class="me-2">
+            <i class="bi bi-geo-alt text-white"></i>
+          </span>
+          <input class="form-control" type="search" name="location" placeholder="Location" aria-label="Search"/>
+        </div>
+        <button type="submit" class="btn">
+          <i class="bi bi-search text-white"></i>
+        </button>
+      </form>
+      
+      <!-- Toggler Button -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      
+      <!-- Collapsible Content -->
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <!-- Navigation Links -->
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0" style="gap: 15px; display: flex;">
+          <!-- Search tab - Only visible on mobile -->
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="{{ route('events.search') }}">
+              <i class="bi bi-search"></i>
+              Search Events
+            </a>
+          </li>
+          
+          <!-- Always visible -->
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="/contacts">Contact Us</a>
+          </li>
+          
+          <!-- Only show when logged in -->
+          @auth
+          <li class="nav-item">
+            <a class="nav-link" href="/events/create">Create Events</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">Dashboard</a>
+          </li>
+          @endauth
+          
+          <!-- Always visible -->
+          <li class="nav-item">
+            <a class="nav-link" href="/help-center">Help Center</a>
+          </li>
+          
+          <!-- Only show when NOT logged in -->
+          @guest
+          <li class="nav-item">
+            <a class="nav-link" href="/account/login">Log In</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/account/create">Sign Up</a>
+          </li>
+          @endguest
 
-        <!-- Only show when logged in -->
-        @auth
-        <!-- Notification Bell -->
-        <li class="nav-item dropdown me-2">
-          <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-bell fs-5"></i>
-            @if(auth()->user()->unread_notifications_count > 0)
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge" style="font-size: 0.7rem;">
-                {{ auth()->user()->unread_notifications_count }}
-              </span>
-            @endif
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown" style="width: 320px; max-height: 400px; overflow-y: auto;">
-            <li class="dropdown-header d-flex justify-content-between align-items-center">
-              <span><i class="bi bi-bell me-1"></i>Notifications</span>
-              <a href="{{ route('notifications.index') }}" class="small text-primary text-decoration-none">View All</a>
-            </li>
-            <li><hr class="dropdown-divider"></li>
-            <li>
-              <a class="dropdown-item" href="{{ route('notifications.settings') }}">
-                <i class="bi bi-bell me-2"></i>Notification Settings
-              </a>
-            </li>
-            <div id="notification-dropdown-content">
-              <!-- Notifications will be loaded here via JavaScript -->
-              <li class="dropdown-item-text text-center py-3">
-                <div class="spinner-border spinner-border-sm text-primary" role="status">
-                  <span class="visually-hidden">Loading...</span>
-                </div>
-                <div class="mt-2 small text-muted">Loading notifications...</div>
+          <!-- Only show when logged in -->
+          @auth
+          <!-- Notification Bell -->
+          <li class="nav-item dropdown me-2">
+            <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-bell fs-5"></i>
+              @if(auth()->user()->unread_notifications_count > 0)
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge" style="font-size: 0.7rem;">
+                  {{ auth()->user()->unread_notifications_count }}
+                </span>
+              @endif
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end notification-dropdown" aria-labelledby="notificationDropdown" style="width: 320px; max-height: 400px; overflow-y: auto;">
+              <li class="dropdown-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-bell me-1"></i>Notifications</span>
+                <a href="{{ route('notifications.index') }}" class="small text-primary text-decoration-none">View All</a>
               </li>
-            </div>
-          </ul>
-        </li>
-
-        <!-- User Profile Dropdown -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle p-0" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent; border: none; border-radius: 50%; width: 52px; height: 40px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
-            <i class="bi bi-person-circle fs-3"></i>
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-            <li>
-              <div class="dropdown-item-text">
-                <strong>{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</strong>
-                <br><small class="text-muted">{{ Auth::user()->email }}</small>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item" href="{{ route('notifications.settings') }}">
+                  <i class="bi bi-bell me-2"></i>Notification Settings
+                </a>
+              </li>
+              <div id="notification-dropdown-content">
+                <!-- Notifications will be loaded here via JavaScript -->
+                <li class="dropdown-item-text text-center py-3">
+                  <div class="spinner-border spinner-border-sm text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                  <div class="mt-2 small text-muted">Loading notifications...</div>
+                </li>
               </div>
-            </li>
-            <li><hr class="dropdown-divider"></li>
-            <li>
-              <a class="dropdown-item" href="/dashboard">
-                <i class="bi bi-speedometer2 me-2"></i>Dashboard
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="/saved-events">
-                <i class="bi bi-bookmark me-2"></i>Saved Events
-                @if(auth()->user()->savedEvents()->count() > 0)
-                  <span class="badge bg-secondary ms-2">{{ auth()->user()->savedEvents()->count() }}</span>
-                @endif
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="/my-events">
-                <i class="bi bi-calendar-event me-2"></i>My Events
-                @if(auth()->user()->events()->count() > 0)
-                  <span class="badge bg-primary ms-2">{{ auth()->user()->events()->count() }}</span>
-                @endif
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="{{ route('notifications.index') }}">
-                <i class="bi bi-bell me-2"></i>Notifications
-                @if(auth()->user()->unread_notifications_count > 0)
-                  <span class="badge bg-danger ms-2">{{ auth()->user()->unread_notifications_count }}</span>
-                @endif
-              </a>
-            </li>
-            <li><hr class="dropdown-divider"></li>
-            <li>
-              <a class="dropdown-item" href="/account/edit">
-                <i class="bi bi-gear me-2"></i>Account Settings
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="{{ route('notifications.settings') }}">
-                <i class="bi bi-bell-gear me-2"></i>Notification Settings
-              </a>
-            </li>
-            <li><hr class="dropdown-divider"></li>
-            <li>
-              <form method="POST" action="{{ route('account.logout') }}">
-                @csrf
-                <button class="dropdown-item text-danger" type="submit">
-                  <i class="bi bi-box-arrow-right me-2"></i>Logout
-                </button>
-              </form>
-            </li>
-          </ul>
-        </li>
-        @endauth
-      </ul>
-    </div>
-  </div>
-</nav>
+            </ul>
+          </li>
 
+          <!-- User Profile Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle p-0" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="background: transparent; border: none; border-radius: 50%; width: 52px; height: 40px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+              <i class="bi bi-person-circle fs-3"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+              <li>
+                <div class="dropdown-item-text">
+                  <strong>{{ Auth::user()->firstname }} {{ Auth::user()->lastname }}</strong>
+                  <br><small class="text-muted">{{ Auth::user()->email }}</small>
+                </div>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item" href="/dashboard">
+                  <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/saved-events">
+                  <i class="bi bi-bookmark me-2"></i>Saved Events
+                  @if(auth()->user()->savedEvents()->count() > 0)
+                    <span class="badge bg-secondary ms-2">{{ auth()->user()->savedEvents()->count() }}</span>
+                  @endif
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="/my-events">
+                  <i class="bi bi-calendar-event me-2"></i>My Events
+                  @if(auth()->user()->events()->count() > 0)
+                    <span class="badge bg-primary ms-2">{{ auth()->user()->events()->count() }}</span>
+                  @endif
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="{{ route('notifications.index') }}">
+                  <i class="bi bi-bell me-2"></i>Notifications
+                  @if(auth()->user()->unread_notifications_count > 0)
+                    <span class="badge bg-danger ms-2">{{ auth()->user()->unread_notifications_count }}</span>
+                  @endif
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item" href="/account/edit">
+                  <i class="bi bi-gear me-2"></i>Account Settings
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="{{ route('notifications.settings') }}">
+                  <i class="bi bi-bell-gear me-2"></i>Notification Settings
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form method="POST" action="{{ route('account.logout') }}">
+                  @csrf
+                  <button class="dropdown-item text-danger" type="submit">
+                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                  </button>
+                </form>
+              </li>
+            </ul>
+          </li>
+          @endauth
+        </ul>
+      </div>
+    </div>
+  </nav>
   <!-- Main Content -->
   <div class="main-content">
     {{ $slot }}
