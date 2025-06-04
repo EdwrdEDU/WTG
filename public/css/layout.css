@@ -429,10 +429,7 @@
 
 
     /* ===== MAIN CONTENT ===== */
-    .main-content {
-      flex: 1;
-      padding: 2rem;
-    }
+    
 
     /* ===== FOOTER STYLES ===== */
     footer {
