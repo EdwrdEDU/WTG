@@ -66,7 +66,23 @@
                                    value="{{ old('date_of_birth', auth()->user()->date_of_birth) }}" 
                                    class="user-date-of-birth-input">
                         </div>
-                    </div>
+
+                        <div class="change-password-section full-width-input" style="margin-top: 24px;">
+                            <h3 class="personal-details-heading">Change Password</h3>
+                            <div class="current-password-input-group" style="width: 100%;">
+                                <label for="current-password-field" class="firstname-label">Current Password</label>
+                                <input type="password" id="current-password-field" name="current_password" class="firstname-text-input" autocomplete="current-password" style="width: 100%;">
+                            </div>
+                            <div class="new-password-input-group" style="width: 100%; margin-top: 12px;">
+                                <label for="new-password-field" class="lastname-label">New Password</label>
+                                <input type="password" id="new-password-field" name="new_password" class="lastname-text-input" autocomplete="new-password" style="width: 100%;">
+                            </div>
+                            <div class="confirm-password-input-group" style="width: 100%; margin-top: 12px;">
+                                <label for="confirm-password-field" class="email-address-label">Confirm New Password</label>
+                                <input type="password" id="confirm-password-field" name="new_password_confirmation" class="email-address-input" autocomplete="new-password" style="width: 100%;">
+                            </div>
+                            <small style="color: #888;">*Leave blank if you do not want to change your password.</small>
+                        </div>
                 </div>
 
                 <!-- Action Buttons -->

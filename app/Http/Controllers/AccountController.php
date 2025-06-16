@@ -70,6 +70,7 @@ class AccountController extends Controller
             'email'          => "required|email|max:255|unique:accounts,email,{$user->id}",
             'phone'          => 'nullable|string|max:20',
             'date_of_birth'  => 'nullable|date',
+            // Password fields are validated below if present
         ]);
 
         $user->firstname = $validated['firstname'];
@@ -77,6 +78,21 @@ class AccountController extends Controller
         $user->email = $validated['email'];
         $user->phone = $validated['phone'] ?? null;
         $user->date_of_birth = $validated['date_of_birth'] ?? null;
+
+        // Handle password change if fields are filled
+        if ($request->filled('current_password') || $request->filled('new_password') || $request->filled('new_password_confirmation')) {
+            $request->validate([
+                'current_password' => 'required',
+                'new_password' => 'required|string|min:8|confirmed',
+            ]);
+
+            if (!Hash::check($request->input('current_password'), $user->password)) {
+                return back()->withErrors(['current_password' => 'Current password is incorrect.'])->withInput();
+            }
+
+            $user->password = bcrypt($request->input('new_password'));
+        }
+
         $user->save();
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
