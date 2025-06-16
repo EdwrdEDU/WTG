@@ -37,7 +37,6 @@
             <div class="event-card">
                 <div class="position-relative">
                     <img src="{{ $event['images'][0]['url'] ?? 'default-image.jpg' }}" class="event-img" alt="Event image">
-                    <span class="featured-badge">Featured</span>
                     
                     <!-- Add save button for logged-in users -->
                     @auth
@@ -226,7 +225,8 @@
                         
                         @guest
                             <!-- Show login prompt for guests -->
-                            <a href="{{ route('login') }}" class="btn btn-outline-secondary btn-sm" title="Login to save events">
+                            <a href="{{ route('login') }}" class="btn btn-outline-danger save-external-event-btn position-absolute wtg-save-btn" 
+                                style="top: 10px; right: 10px; background: rgba(255,255,255,0.9);" >
                                 <i class="bi bi-heart"></i>
                             </a>
                         @endguest
@@ -1171,9 +1171,10 @@ document.addEventListener('DOMContentLoaded', function() {
       `;
     } else {
       saveButtonHTML = `
-        <a href="/account/login" class="btn btn-outline-danger position-absolute" 
-           style="top: 10px; right: 10px;"
-           title="Login to save">
+        <a href="/account/login" class="btn btn-outline-danger save-external-event-btn position-absolute wtg-save-btn" 
+          style="top: 10px; right: 10px; background: rgba(255,255,255,0.9);" " 
+          style="top: 10px; right: 10px;"
+          title="Login to save">
           <i class="bi bi-heart"></i>
         </a>
       `;
