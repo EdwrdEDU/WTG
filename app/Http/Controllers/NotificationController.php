@@ -24,9 +24,9 @@ class NotificationController extends Controller
     public function index()
     {
         $notifications = Auth::user()->notifications()
-                             ->with('savedEvent')
-                             ->latest()
-                             ->paginate(20);
+                            ->with('savedEvent')
+                            ->latest()
+                            ->paginate(20);
 
         $unreadCount = Auth::user()->unread_notifications_count;
 
