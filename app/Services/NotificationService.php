@@ -35,6 +35,7 @@ class NotificationService
 
         switch ($type) {
             case 'event_tomorrow':
+                // Schedule notification 1 day before at 9 AM
                 $scheduledFor = $eventDate->copy()->subDay()->setTime(9, 0);
                 $title = "Event Tomorrow!";
                 $message = "Don't forget! '{$savedEvent->title}' is happening tomorrow at " . 
@@ -42,28 +43,50 @@ class NotificationService
                 break;
 
             case 'event_today':
-                $scheduledFor = $eventDate->copy()->setTime(8, 0);
+                // Schedule notification on event day at 8 AM
+                $scheduledFor = $eventDate->copy()->startOfDay()->setTime(8, 0);
                 $title = "Event Today!";
                 $message = "'{$savedEvent->title}' is happening today at " . 
                           $eventDate->format('g:i A') . ". Don't miss it!";
                 break;
 
             case 'event_in_week':
+                // Schedule notification 1 week before at 10 AM
                 $scheduledFor = $eventDate->copy()->subWeek()->setTime(10, 0);
                 $title = "Event Next Week";
                 $message = "'{$savedEvent->title}' is coming up next week on " . 
                           $eventDate->format('l, M j \a\t g:i A');
                 break;
 
+            case 'event_reminder':
             default:
+                // Schedule notification exactly 2 hours before event
                 $scheduledFor = $eventDate->copy()->subHours(2);
                 $title = "Event Starting Soon!";
                 $message = "'{$savedEvent->title}' starts in 2 hours at " . 
                           $eventDate->format('g:i A');
+                break;
         }
 
-        // Only schedule if the notification time is in the future
+        // CRITICAL FIX: Only create notification if it's time to send it
         if ($scheduledFor && $scheduledFor->isFuture()) {
+            
+            // KEY FIX: Don't create the notification record yet, just log it
+            Log::info('Notification scheduled for future', [
+                'event_title' => $savedEvent->title,
+                'event_date' => $eventDate->toDateTimeString(),
+                'notification_type' => $type,
+                'scheduled_for' => $scheduledFor->toDateTimeString(),
+                'time_until_notification' => $scheduledFor->diffForHumans(now()),
+                'account_id' => $savedEvent->account_id
+            ]);
+
+            // Don't create notification record until it's time to send
+            return null;
+        }
+
+        // Only create notification if it should be sent NOW
+        if ($scheduledFor && $scheduledFor->isPast()) {
             return Notification::create([
                 'account_id' => $savedEvent->account_id,
                 'saved_event_id' => $savedEvent->id,
@@ -71,6 +94,7 @@ class NotificationService
                 'title' => $title,
                 'message' => $message,
                 'scheduled_for' => $scheduledFor,
+                'is_sent' => false, // Will be marked true when actually sent
                 'data' => [
                     'event_title' => $savedEvent->title,
                     'event_date' => $savedEvent->event_date,
@@ -127,12 +151,14 @@ class NotificationService
                 break;
         }
 
+        // Update notifications are sent immediately
         return Notification::create([
             'account_id' => $savedEvent->account_id,
             'saved_event_id' => $savedEvent->id,
             'type' => 'event_update',
             'title' => $title,
             'message' => $message,
+            'is_sent' => false,
             'data' => array_merge([
                 'event_title' => $savedEvent->title,
                 'update_type' => $updateType,
@@ -143,11 +169,120 @@ class NotificationService
 
     public function scheduleNotificationsForSavedEvent(SavedEvent $savedEvent)
     {
-        // Create multiple reminder notifications
+        // This method now just logs what WOULD be scheduled
+        Log::info('Scheduling notifications for saved event', [
+            'event_title' => $savedEvent->title,
+            'event_date' => $savedEvent->event_date,
+            'account_id' => $savedEvent->account_id
+        ]);
+
+        // Don't create notifications yet, they'll be created when it's time to send them
         $this->createEventReminder($savedEvent, 'event_in_week');
         $this->createEventReminder($savedEvent, 'event_tomorrow');
         $this->createEventReminder($savedEvent, 'event_today');
         $this->createEventReminder($savedEvent, 'event_reminder');
+    }
+
+    /**
+     * NEW METHOD: Check for events that need notifications sent NOW
+     */
+    public function createDueNotifications()
+    {
+        $now = now();
+        $eventsNeedingNotifications = SavedEvent::whereNotNull('event_date')
+            ->where('event_date', '>', $now) // Only future events
+            ->with('account')
+            ->get();
+
+        $notificationsCreated = 0;
+
+        foreach ($eventsNeedingNotifications as $savedEvent) {
+            $eventDate = Carbon::parse($savedEvent->event_date);
+
+            // Check each notification type and create if it's time
+            $notificationTypes = [
+                'event_in_week' => $eventDate->copy()->subWeek()->setTime(10, 0),
+                'event_tomorrow' => $eventDate->copy()->subDay()->setTime(9, 0),
+                'event_today' => $eventDate->copy()->startOfDay()->setTime(8, 0),
+                'event_reminder' => $eventDate->copy()->subHours(2)
+            ];
+
+            foreach ($notificationTypes as $type => $scheduledTime) {
+                // Check if it's time to send this notification
+                if ($scheduledTime->isPast() && $scheduledTime->diffInMinutes($now) <= 60) {
+                    // Check if we already created this notification
+                    $exists = Notification::where('account_id', $savedEvent->account_id)
+                        ->where('saved_event_id', $savedEvent->id)
+                        ->where('type', $type)
+                        ->exists();
+
+                    if (!$exists && $savedEvent->account->wantsNotification($type)) {
+                        $this->createEventReminderNow($savedEvent, $type, $scheduledTime);
+                        $notificationsCreated++;
+                    }
+                }
+            }
+        }
+
+        Log::info('Created due notifications', [
+            'count' => $notificationsCreated,
+            'checked_at' => $now->toDateTimeString()
+        ]);
+
+        return $notificationsCreated;
+    }
+
+    /**
+     * Create notification immediately (when it's due)
+     */
+    private function createEventReminderNow(SavedEvent $savedEvent, string $type, Carbon $scheduledTime)
+    {
+        $eventDate = Carbon::parse($savedEvent->event_date);
+        $title = '';
+        $message = '';
+
+        switch ($type) {
+            case 'event_tomorrow':
+                $title = "Event Tomorrow!";
+                $message = "Don't forget! '{$savedEvent->title}' is happening tomorrow at " . 
+                          $eventDate->format('g:i A');
+                break;
+
+            case 'event_today':
+                $title = "Event Today!";
+                $message = "'{$savedEvent->title}' is happening today at " . 
+                          $eventDate->format('g:i A') . ". Don't miss it!";
+                break;
+
+            case 'event_in_week':
+                $title = "Event Next Week";
+                $message = "'{$savedEvent->title}' is coming up next week on " . 
+                          $eventDate->format('l, M j \a\t g:i A');
+                break;
+
+            case 'event_reminder':
+            default:
+                $title = "Event Starting Soon!";
+                $message = "'{$savedEvent->title}' starts in 2 hours at " . 
+                          $eventDate->format('g:i A');
+                break;
+        }
+
+        return Notification::create([
+            'account_id' => $savedEvent->account_id,
+            'saved_event_id' => $savedEvent->id,
+            'type' => $type,
+            'title' => $title,
+            'message' => $message,
+            'scheduled_for' => $scheduledTime,
+            'is_sent' => false,
+            'data' => [
+                'event_title' => $savedEvent->title,
+                'event_date' => $savedEvent->event_date,
+                'venue_name' => $savedEvent->venue_name,
+                'event_url' => $savedEvent->display_url ?? null
+            ]
+        ]);
     }
 
     public function getUnreadNotifications(Account $account, $limit = 10)
@@ -168,21 +303,32 @@ class NotificationService
 
     public function sendPendingNotifications()
     {
-        $notifications = Notification::pending()
+        // First, create any notifications that are due
+        $this->createDueNotifications();
+
+        // Then send notifications that exist and are ready
+        $notifications = Notification::where('is_sent', false)
+                                   ->whereNotNull('scheduled_for')
+                                   ->where('scheduled_for', '<=', now())
                                    ->with(['account', 'savedEvent'])
                                    ->get();
+
+        $successCount = 0;
 
         foreach ($notifications as $notification) {
             try {
                 // Mark as sent
                 $notification->update(['is_sent' => true]);
+                $successCount++;
 
                 // Here you can add email/SMS sending logic
                 Log::info('Notification sent', [
                     'notification_id' => $notification->id,
                     'account_id' => $notification->account_id,
                     'type' => $notification->type,
-                    'title' => $notification->title
+                    'title' => $notification->title,
+                    'scheduled_for' => $notification->scheduled_for?->toDateTimeString(),
+                    'sent_at' => now()->toDateTimeString()
                 ]);
 
             } catch (\Exception $e) {
@@ -191,11 +337,38 @@ class NotificationService
                 
                 Log::error('Failed to send notification', [
                     'notification_id' => $notification->id,
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
                 ]);
             }
         }
 
-        return $notifications->count();
+        return $successCount;
+    }
+
+    /**
+     * Debug method to check what notifications would be scheduled
+     */
+    public function getScheduledNotifications(Account $account = null)
+    {
+        $query = Notification::where('is_sent', false)
+                            ->whereNotNull('scheduled_for')
+                            ->orderBy('scheduled_for');
+
+        if ($account) {
+            $query->where('account_id', $account->id);
+        }
+
+        return $query->get()->map(function ($notification) {
+            return [
+                'id' => $notification->id,
+                'type' => $notification->type,
+                'title' => $notification->title,
+                'scheduled_for' => $notification->scheduled_for?->toDateTimeString(),
+                'time_until' => $notification->scheduled_for?->diffForHumans(now()),
+                'event_title' => $notification->savedEvent?->title,
+                'event_date' => $notification->savedEvent?->event_date
+            ];
+        });
     }
 }

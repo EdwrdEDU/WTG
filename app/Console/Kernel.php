@@ -15,15 +15,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
 {
-    // Send event notifications every hour
-    $schedule->command('notifications:send-event-reminders')
-             ->hourly()
-             ->withoutOverlapping();
-    
-    // Clean up old read notifications (older than 30 days)
-    $schedule->call(function () {
-        \App\Models\Notification::where('read_at', '<', now()->subDays(30))->delete();
-    })->daily();
+    // Check every 15 minutes for due notifications
+    $schedule->command('notifications:check')
+             ->everyFifteenMinutes();
 }
 
     /**
