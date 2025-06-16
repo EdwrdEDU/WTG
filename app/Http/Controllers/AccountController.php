@@ -6,6 +6,11 @@ use App\Models\Account;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+use App\Mail\ResetPasswordMail;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule; 
+
 
 class AccountController extends Controller
 {
@@ -97,6 +102,64 @@ class AccountController extends Controller
 
         return redirect()->back()->with('success', 'Profile updated successfully!');
     }
+
+    public function showForgotPasswordForm()
+{
+    return view('auth.forgot-password');
+}
+
+public function sendResetLink(Request $request)
+{
+    $request->validate(['email' => 'required|email']);
+
+    $user = Account::where('email', $request->email)->first();
+
+    if (!$user) {
+        return back()->withErrors(['email' => 'Email not found']);
+    }
+
+    $token = Str::random(64);
+    $user->reset_token = $token;
+    $user->reset_token_expires_at = now()->addHour();
+    $user->save();
+
+    Mail::to($user->email)->send(new ResetPasswordMail($token));
+
+    return back()->with('status', 'Reset link sent to your email.');
+}
+
+public function showResetForm($token)
+{
+    return view('auth.reset-password', ['token' => $token]);
+}
+
+public function resetPassword(Request $request)
+{
+    $request->validate([
+        'token' => 'required',
+        'password' => 'required|confirmed|min:6',
+    ]);
+
+    $user = Account::where('reset_token', $request->token)
+                   ->where('reset_token_expires_at', '>', now())
+                   ->first();
+
+    if (!$user) {
+        return back()->withErrors(['token' => 'Invalid or expired token']);
+    }
+
+    $user->password = Hash::make($request->password); // more consistent than bcrypt
+    $user->reset_token = null;
+    $user->reset_token_expires_at = null;
+    $user->save();
+
+    // Optionally auto-login:
+    // Auth::login($user);
+
+    return redirect('/account/login')->with('status', 'Password successfully reset.');
+}
+
+
 
 }
 

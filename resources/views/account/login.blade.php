@@ -1,4 +1,10 @@
 <x-layout>
+    @if (session('status'))
+    <div class="alert alert-success">
+        {{ session('status') }}
+    </div>
+@endif
+
 <div class="login-container">
     <div class="login-panel">
         <div class="login-logo">
@@ -19,8 +25,11 @@
                 <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
             </div>
             <div class="form-group mb-3 forgot-password">
-                <a href="/forgot-password">Forgot password?</a>
-            </div>
+   <a href="{{ route('forgot.password') }}">Forgot password?</a>
+
+
+</div>
+
             <button type="submit" class="btn login-btn">
                 Sign In
             </button>
@@ -39,4 +48,6 @@
         </div>
     </div>
 </div>
+
+
 </x-layout>
