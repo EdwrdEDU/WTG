@@ -96,19 +96,30 @@
 }
 
 /* WTG Compact Search */
+.wtg-compact-search {
+    display: flex;
+    align-items: stretch;
+}
+
 .wtg-compact-search .form-control {
     border-radius: 6px;
     border: 1px solid var(--wtg-border-light);
     transition: all 0.2s ease;
+    height: 44px;
+    /* Ensures consistent height */
+    box-sizing: border-box;
 }
 
 .wtg-compact-search .wtg-search-input {
     border-radius: 6px 0 0 6px;
+    border-right: none;
+    height: 44px;
 }
 
 .wtg-compact-search .wtg-location-input {
     border-radius: 0 6px 6px 0;
     border-left: none;
+    height: 44px;
 }
 
 .wtg-compact-search .form-control:focus {

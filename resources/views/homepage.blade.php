@@ -41,8 +41,8 @@
                     
                     <!-- Add save button for logged-in users -->
                     @auth
-                        <button class="btn btn-outline-danger save-external-event-btn position-absolute" 
-                                style="top: 10px; left: 10px; "
+                        <button class="btn btn-outline-danger save-external-event-btn position-absolute wtg-save-btn" 
+                                style="top: 10px; right: 10px; background: rgba(255,255,255,0.9);" 
                                 data-event-id="{{ $event['id'] }}" 
                                 data-event-name="{{ $event['name'] }}"
                                 data-event-url="{{ $event['url'] ?? '' }}"
@@ -182,7 +182,8 @@
                     
                     <!-- Add save button here for logged-in users -->
                     @auth
-                        <button class="btn btn-outline-danger save-external-event-btn position-absolute top-0 end-0 m-2" 
+                        <button class="btn btn-outline-danger save-external-event-btn position-absolute wtg-save-btn" 
+                                style="top: 10px; right: 10px; background: rgba(255,255,255,0.9);"
                                 data-event-id="{{ $event['id'] }}" 
                                 data-event-name="{{ $event['name'] }}"
                                 data-event-url="{{ $event['url'] ?? '' }}"
@@ -384,6 +385,7 @@
         <a href="/account/create" class="btn btn-lg" style="background-color: var(--primary-color); color: white;">Sign Up to Create Events</a>
     @endauth
   </div>
+</div>
 </div>
 
 
@@ -1152,7 +1154,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let saveButtonHTML = '';
     if (isLoggedIn) {
       saveButtonHTML = `
-        <button class="btn btn-outline-danger save-external-event-btn position-absolute" 
+        <button class="btn btn-outline-danger save-external-event-btn position-absolute wtg-save-btn" 
+                style="top: 10px; right: 10px; background: rgba(255,255,255,0.9);"
                 style="top: 10px; right: 10px; "
                 data-event-id="${event.id}" 
                 data-event-name="${eventName.replace(/"/g, '&quot;')}"

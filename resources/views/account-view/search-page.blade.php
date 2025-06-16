@@ -22,9 +22,9 @@
                     <div class="wtg-compact-search mb-3">
                         <div class="input-group">
                             <input type="text" class="form-control form-control-sm wtg-search-input" 
-                                   name="event" placeholder="Event name or keyword" value="{{ $query ?? '' }}">
+                                name="event" placeholder="Event name or keyword" value="{{ $query ?? '' }}">
                             <input type="text" class="form-control form-control-sm wtg-location-input" 
-                                   name="location" placeholder="City or venue" value="{{ $location ?? '' }}">
+                                name="location" placeholder="City or venue" value="{{ $location ?? '' }}">
                         </div>
                     </div>
                     
@@ -183,7 +183,8 @@
             <!-- WTG Results grid -->
             <div class="row wtg-search-results" id="wtg-search-results">
                 @if(isset($searchResults) && $searchResults->count() > 0)
-                    @foreach($searchResults as $event)
+                    {{-- Show local events first --}}
+                    @foreach($searchResults->where('event_type', 'local') as $event)
                         <div class="col-md-4 mb-4 wtg-event-col">
                             <article class="card wtg-event-card h-100">
                                 <div class="position-relative wtg-event-image-container">
@@ -192,38 +193,17 @@
                                          style="height: 200px; object-fit: cover;">
                                     
                                     <!-- WTG Event source badge -->
-                                    @if($event['event_type'] == 'local')
-                                        <span class="badge bg-success position-absolute wtg-event-badge" 
-                                              style="top: 10px; left: 10px;">Local</span>
-                                    @else
-                                        <span class="badge bg-info position-absolute wtg-event-badge" 
-                                              style="top: 10px; left: 10px;">External</span>
-                                    @endif
+                                    <span class="badge bg-success position-absolute wtg-event-badge" 
+                                          style="top: 10px; left: 10px;">Local</span>
                                     
                                     <!-- WTG Save button -->
                                     @auth
-                                        @if($event['event_type'] == 'local')
-                                            <button class="btn btn-outline-danger save-event-btn position-absolute wtg-save-btn" 
-                                                    style="top: 10px; right: 10px; background: rgba(255,255,255,0.9);"
-                                                    data-event-id="{{ $event['local_event_id'] }}" 
-                                                    title="Save Event">
-                                                <i class="bi bi-heart"></i>
-                                            </button>
-                                        @else
-                                            <button class="btn btn-outline-danger save-external-event-btn position-absolute wtg-save-btn" 
-                                                    style="top: 10px; right: 10px; background: rgba(255,255,255,0.9);"
-                                                    data-event-id="{{ $event['id'] }}" 
-                                                    data-event-name="{{ $event['name'] }}"
-                                                    data-event-url="{{ $event['url'] ?? '' }}"
-                                                    data-event-image="{{ $event['images'][0]['url'] ?? '' }}"
-                                                    data-event-date="{{ $event['dates']['start']['dateTime'] ?? '' }}"
-                                                    data-venue-name="{{ $event['_embedded']['venues'][0]['name'] ?? '' }}"
-                                                    data-venue-address="{{ $event['_embedded']['venues'][0]['address']['line1'] ?? '' }}"
-                                                    data-price-info="{{ isset($event['priceRanges']) ? $event['priceRanges'][0]['min'] . '-' . $event['priceRanges'][0]['max'] . ' ' . $event['priceRanges'][0]['currency'] : 'Free' }}"
-                                                    title="Save Event">
-                                                <i class="bi bi-heart"></i>
-                                            </button>
-                                        @endif
+                                        <button class="btn btn-outline-danger save-event-btn position-absolute wtg-save-btn" 
+                                                style="top: 10px; right: 10px; background: rgba(255,255,255,0.9);"
+                                                data-event-id="{{ $event['local_event_id'] }}" 
+                                                title="Save Event">
+                                            <i class="bi bi-heart"></i>
+                                        </button>
                                     @else
                                         <a href="{{ route('login') }}" class="btn btn-outline-danger position-absolute wtg-login-save-btn" 
                                            style="top: 10px; right: 10px; background: rgba(255,255,255,0.9);"
@@ -261,19 +241,90 @@
                                         </strong>
                                     </div>
                                     
-                                    @if($event['event_type'] == 'local')
-                                        <div class="text-muted small mb-3 wtg-event-creator">
-                                            <i class="bi bi-person"></i> Created by {{ $event['creator'] ?? 'Anonymous' }}
-                                        </div>
-                                    @endif
+                                    <div class="text-muted small mb-3 wtg-event-creator">
+                                        <i class="bi bi-person"></i> Created by {{ $event['creator'] ?? 'Anonymous' }}
+                                    </div>
                                     
                                     <a href="{{ $event['url'] ?? '#' }}" 
-                                       target="{{ $event['event_type'] == 'external' ? '_blank' : '_self' }}" 
+                                       target="_self" 
+                                       class="btn btn-primary btn-sm w-100 wtg-view-event-btn">
+                                        View Event
+                                    </a>
+                                </div>
+                            </article>
+                        </div>
+                    @endforeach
+
+                    {{-- Then show external events --}}
+                    @foreach($searchResults->where('event_type', 'external') as $event)
+                        <div class="col-md-4 mb-4 wtg-event-col">
+                            <article class="card wtg-event-card h-100">
+                                <div class="position-relative wtg-event-image-container">
+                                    <img src="{{ $event['images'][0]['url'] ?? '/images/default-image.jpg' }}" 
+                                         class="card-img-top wtg-event-image" alt="{{ $event['name'] }}" 
+                                         style="height: 200px; object-fit: cover;">
+                                    
+                                    <!-- WTG Event source badge -->
+                                    <span class="badge bg-info position-absolute wtg-event-badge" 
+                                          style="top: 10px; left: 10px;">External</span>
+                                    
+                                    <!-- WTG Save button -->
+                                    @auth
+                                        <button class="btn btn-outline-danger save-external-event-btn position-absolute wtg-save-btn" 
+                                                style="top: 10px; right: 10px; background: rgba(255,255,255,0.9);"
+                                                data-event-id="{{ $event['id'] }}" 
+                                                data-event-name="{{ $event['name'] }}"
+                                                data-event-url="{{ $event['url'] ?? '' }}"
+                                                data-event-image="{{ $event['images'][0]['url'] ?? '' }}"
+                                                data-event-date="{{ $event['dates']['start']['dateTime'] ?? '' }}"
+                                                data-venue-name="{{ $event['_embedded']['venues'][0]['name'] ?? '' }}"
+                                                data-venue-address="{{ $event['_embedded']['venues'][0]['address']['line1'] ?? '' }}"
+                                                data-price-info="{{ isset($event['priceRanges']) ? $event['priceRanges'][0]['min'] . '-' . $event['priceRanges'][0]['max'] . ' ' . $event['priceRanges'][0]['currency'] : 'Free' }}"
+                                                title="Save Event">
+                                            <i class="bi bi-heart"></i>
+                                        </button>
+                                    @else
+                                        <a href="{{ route('login') }}" class="btn btn-outline-danger position-absolute wtg-login-save-btn" 
+                                           style="top: 10px; right: 10px; background: rgba(255,255,255,0.9);"
+                                           title="Login to save">
+                                            <i class="bi bi-heart"></i>
+                                        </a>
+                                    @endauth
+                                </div>
+                                <div class="card-body p-3 wtg-event-details">
+                                    <div class="wtg-event-date text-muted small mb-2">
+                                        <i class="bi bi-calendar"></i> 
+                                        @if(isset($event['dates']['start']['dateTime']))
+                                            {{ \Carbon\Carbon::parse($event['dates']['start']['dateTime'])->format('D, M j • g:i A') }}
+                                        @else
+                                            Date TBA
+                                        @endif
+                                    </div>
+                                    <h5 class="card-title wtg-event-title">{{ $event['name'] }}</h5>
+                                    <div class="wtg-event-location text-muted small mb-2">
+                                        <i class="bi bi-geo-alt"></i>
+                                        {{ $event['_embedded']['venues'][0]['name'] ?? 'Location not available' }}
+                                    </div>
+                                    <div class="wtg-event-price mb-2">
+                                        <strong>
+                                            @if(isset($event['priceRanges']))
+                                                @if($event['priceRanges'][0]['min'] == $event['priceRanges'][0]['max'])
+                                                    ${{ $event['priceRanges'][0]['min'] }}
+                                                @else
+                                                    ${{ $event['priceRanges'][0]['min'] }} - ${{ $event['priceRanges'][0]['max'] }}
+                                                @endif
+                                                {{ $event['priceRanges'][0]['currency'] }}
+                                            @else
+                                                Price TBA
+                                            @endif
+                                        </strong>
+                                    </div>
+                                    
+                                    <a href="{{ $event['url'] ?? '#' }}" 
+                                       target="_blank" 
                                        class="btn btn-primary btn-sm w-100 wtg-view-event-btn">
                                         View Event 
-                                        @if($event['event_type'] == 'external') 
-                                            <i class="bi bi-box-arrow-up-right ms-1"></i>
-                                        @endif
+                                        <i class="bi bi-box-arrow-up-right ms-1"></i>
                                     </a>
                                 </div>
                             </article>

@@ -35,6 +35,9 @@
                         <input class="input-field" type="password" id="password_confirmation" name="password_confirmation" required>
                     </div>
                 </div>
+                @error('password')
+                    <div class="error-message" style="color:red;">{{ $message }}</div>
+                @enderror
                 <div class="create-button">
                     <button type="submit">Create Account</button>
                 </div>

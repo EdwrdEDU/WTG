@@ -115,7 +115,7 @@
               <li><hr class="dropdown-divider"></li>
               <li>
                 <a class="dropdown-item" href="{{ route('notifications.settings') }}">
-                  <i class="bi bi-bell me-2"></i>Notification Settings
+                    <i class="bi bi-bell-gear me-1"></i>Notification Settings
                 </a>
               </li>
               <div id="notification-dropdown-content">
@@ -205,7 +205,7 @@
   </div>
 
   <!-- Footer -->
-  <footer class="bg-dark text-white py-3">
+  <footer class="bg-dark text-white py-3 mt-auto" style="position: relative; width: 100%;">
     <div class="container">
       <div class="row">
         <div class="col-md-3">
@@ -249,6 +249,23 @@
       </div>
     </div>
   </footer>
+  <style>
+    html, body {
+      height: 100%;
+      min-height: 100%;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .main-content {
+      flex: 1 0 auto;
+    }
+    footer {
+      flex-shrink: 0;
+    }
+  </style>
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
@@ -629,52 +646,64 @@
     }
 
     function saveLocalEvent(eventId, button) {
-        if (!isLoggedIn()) {
-            showLoginPrompt();
-            return;
-        }
+      if (!isLoggedIn()) {
+        showLoginPrompt();
+        return;
+      }
 
-        const buttonId = eventId + '_local';
-        
-        if (processingButtons.has(buttonId)) {
-            return;
+      const buttonId = eventId + '_local';
+
+      if (processingButtons.has(buttonId)) {
+        return;
+      }
+
+      // Prevent saving if already saved
+      if (button.classList.contains('saved')) {
+        showToast('This event is already saved.', 'info');
+        return;
+      }
+
+      processingButtons.add(buttonId);
+      button.disabled = true;
+      const originalHtml = button.innerHTML;
+      button.innerHTML = '<i class="bi bi-heart-fill text-danger"></i>';
+
+      fetch(`/events/${eventId}/save`, {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+          'Content-Type': 'application/json'
         }
-        
-        processingButtons.add(buttonId);
-        button.disabled = true;
-        const originalHtml = button.innerHTML;
-        button.innerHTML = '<i class="bi bi-heart-fill"></i>';
-        
-        fetch(`/events/${eventId}/save`, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                button.classList.add('saved', 'btn-danger');
-                button.classList.remove('btn-outline-danger');
-                button.innerHTML = '<i class="bi bi-heart-fill"></i>';
-                button.title = 'Remove from saved';
-                showToast(data.message, 'success');
-                updateNotificationBadge(); // Update notification badge
-            } else {
-                button.innerHTML = originalHtml;
-                showToast(data.message, 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            button.innerHTML = originalHtml;
-            showToast('Failed to save event. Please try again.', 'error');
-        })
-        .finally(() => {
-            button.disabled = false;
-            processingButtons.delete(buttonId);
-        });
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          button.classList.add('saved', 'btn-danger');
+          button.classList.remove('btn-outline-danger');
+          button.innerHTML = '<i class="bi bi-heart-fill text-danger"></i>';
+          button.title = 'Remove from saved';
+          showToast(data.message, 'success');
+          updateNotificationBadge(); // Update notification badge
+        } else if (data.already_saved) {
+          button.classList.add('saved', 'btn-danger');
+          button.classList.remove('btn-outline-danger');
+          button.innerHTML = '<i class="bi bi-heart-fill text-danger"></i>';
+          button.title = 'Remove from saved';
+          showToast('This event is already saved.', 'info');
+        } else {
+          button.innerHTML = originalHtml;
+          showToast(data.message, 'error');
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        button.innerHTML = originalHtml;
+        showToast('Failed to save event. Please try again.', 'error');
+      })
+      .finally(() => {
+        button.disabled = false;
+        processingButtons.delete(buttonId);
+      });
     }
 
     function unsaveLocalEvent(eventId, button) {
@@ -721,64 +750,66 @@
     }
 
     function saveExternalEvent(button) {
-        if (!isLoggedIn()) {
-            showLoginPrompt();
-            return;
-        }
+      if (!isLoggedIn()) {
+        showLoginPrompt();
+        return;
+      }
 
-        const eventId = button.getAttribute('data-event-id');
-        const buttonId = eventId + '_external';
-        
-        if (processingButtons.has(buttonId)) {
-            return;
+      const eventId = button.getAttribute('data-event-id');
+      const buttonId = eventId + '_external';
+      
+      if (processingButtons.has(buttonId)) {
+        return;
+      }
+      
+      processingButtons.add(buttonId);
+      button.disabled = true;
+      const originalHtml = button.innerHTML;
+      button.innerHTML = '<i class="bi bi-heart-fill"></i>';
+      
+      const eventData = {
+        event_id: eventId,
+        event_name: button.getAttribute('data-event-name'),
+        event_url: button.getAttribute('data-event-url'),
+        event_image: button.getAttribute('data-event-image'),
+        event_date: button.getAttribute('data-event-date'),
+        venue_name: button.getAttribute('data-venue-name'),
+        venue_address: button.getAttribute('data-venue-address'),
+        price_info: button.getAttribute('data-price-info')
+      };
+      
+      fetch('/saved-events/external', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(eventData)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          button.classList.add('saved', 'btn-danger');
+          button.classList.remove('btn-outline-danger');
+          // Use dull red for the icon if saved
+          button.innerHTML = '<i class="bi bi-heart-fill" style="color: #bb2d3b;"></i>';
+          button.title = 'Remove from saved';
+          showToast(data.message, 'success');
+          updateNotificationBadge(); // Update notification badge
+        } else {
+          button.innerHTML = originalHtml;
+          showToast(data.message, 'error');
         }
-        
-        processingButtons.add(buttonId);
-        button.disabled = true;
-        const originalHtml = button.innerHTML;
-        button.innerHTML = '<i class="bi bi-heart-fill"></i>';
-        
-        const eventData = {
-            event_id: eventId,
-            event_name: button.getAttribute('data-event-name'),
-            event_url: button.getAttribute('data-event-url'),
-            event_image: button.getAttribute('data-event-image'),
-            event_date: button.getAttribute('data-event-date'),
-            venue_name: button.getAttribute('data-venue-name'),
-            venue_address: button.getAttribute('data-venue-address'),
-            price_info: button.getAttribute('data-price-info')
-        };
-        
-        fetch('/saved-events/external', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(eventData)
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                button.classList.add('saved', 'btn-danger');
-                button.classList.remove('btn-outline-danger');
-                button.title = 'Remove from saved';
-                showToast(data.message, 'success');
-                updateNotificationBadge(); // Update notification badge
-            } else {
-                button.innerHTML = originalHtml;
-                showToast(data.message, 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            button.innerHTML = originalHtml;
-            showToast('Failed to save event. Please try again.', 'error');
-        })
-        .finally(() => {
-            button.disabled = false;
-            processingButtons.delete(buttonId);
-        });
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        button.innerHTML = originalHtml;
+        showToast('Failed to save event. Please try again.', 'error');
+      })
+      .finally(() => {
+        button.disabled = false;
+        processingButtons.delete(buttonId);
+      });
     }
 
     function unsaveExternalEvent(button) {

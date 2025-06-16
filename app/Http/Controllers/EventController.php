@@ -129,8 +129,15 @@ class EventController extends Controller
         $priceMin = $request->input('price_min');
         $priceMax = $request->input('price_max');
 
-        $externalEvents = $this->searchExternalEvents($query, $location, $category, $startDate, $endDate);
-        $localEvents = $this->searchLocalEvents($query, $location, $category, $startDate, $endDate, $priceMin, $priceMax);
+        // Allow searching by event only, location only, or both
+        if (empty($query) && empty($location)) {
+            // If both are empty, return empty results or all events as needed
+            $externalEvents = collect();
+            $localEvents = collect();
+        } else {
+            $externalEvents = $this->searchExternalEvents($query, $location, $category, $startDate, $endDate);
+            $localEvents = $this->searchLocalEvents($query, $location, $category, $startDate, $endDate, $priceMin, $priceMax);
+        }
 
         $allEvents = $externalEvents->merge($localEvents);
 
